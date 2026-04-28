@@ -8,12 +8,12 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  name String
-  email String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  bookings Booking[]
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
 }
 
 enum BookingStatus {
@@ -23,43 +23,43 @@ enum BookingStatus {
 }
 
 model Booking {
-  id String @id @default(uuid())
-  idUser String
+  id           String        @id @default(uuid())
+  idUser       String
   idBarbershop String
-  idService String
-  status BookingStatus
-  startsAt DateTime
-  endsAt DateTime
-  user User @relation(fields: [idUser], references: [id])
-  barbershop Barbershop @relation(fields: [idBarbershop], references: [id])
-  service Service @relation(fields: [idService], references: [id])
+  idService    String
+  status       BookingStatus
+  startsAt     DateTime
+  endsAt       DateTime
+  user         User          @relation(fields: [idUser], references: [id])
+  barbershop   Barbershop    @relation(fields: [idBarbershop], references: [id])
+  service      Service       @relation(fields: [idService], references: [id])
 }
 
 model Barbershop {
-  id String @id @default(uuid())
-  name String
-  address String
+  id          String    @id @default(uuid())
+  name        String
+  address     String
   description String
-  imageUrl String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  bookings Booking[]
-  services Service[]
-  phones Phone[]
+  imageUrl    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+  services    Service[]
+  phones      Phone[]
 }
 
 model Service {
-  id String @id @default(uuid())
+  id           String     @id @default(uuid())
   idBarbershop String
-  name String
-  price Decimal @db.Decimal(5, 2)
-  bookings Booking[]
-  barbershop Barbershop @relation(fields: [idBarbershop], references: [id])
+  name         String
+  price        Decimal    @db.Decimal(5, 2)
+  bookings     Booking[]
+  barbershop   Barbershop @relation(fields: [idBarbershop], references: [id])
 }
 
 model Phone {
-  id String @default(uuid()) @id
-  number String
+  id           String     @id @default(uuid())
+  number       String
   barbershopId String
-  barbershop Barbershop @relation(fields: [barbershopId], references: [id])
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
 }
