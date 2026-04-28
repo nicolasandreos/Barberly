@@ -7,42 +7,59 @@ datasource db {
   provider = "postgresql"
 }
 
-model Users {
+model User {
   id String @id @default(uuid())
   name String
   email String @unique
   createdAt DateTime @default(now())
-  updatedAt DateTime
-  bookings Bookings[]
+  updatedAt DateTime @updatedAt
+  bookings Booking[]
 }
 
-model Bookings {
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Booking {
   id String @id @default(uuid())
-  id_user String
-  id_barbershop String
-  id_service String
-  user Users @relation(fields: [id_user], references: [id])
-  barbershop Barbershops @relation(fields: [id_barbershop], references: [id])
-  service Services @relation(fields: [id_service], references: [id])
-  date DateTime
+  idUser String
+  idBarbershop String
+  idService String
+  status BookingStatus
+  startsAt DateTime
+  endsAt DateTime
+  user User @relation(fields: [idUser], references: [id])
+  barbershop Barbershop @relation(fields: [idBarbershop], references: [id])
+  service Service @relation(fields: [idService], references: [id])
 }
 
-model Barbershops {
+model Barbershop {
   id String @id @default(uuid())
   name String
   address String
   description String
-  image_url String
-  phones String[]
+  imageUrl String
   createdAt DateTime @default(now())
-  updatedAt DateTime
-  bookings Bookings[]
+  updatedAt DateTime @updatedAt
+  bookings Booking[]
+  services Service[]
+  phones Phone[]
 }
 
-model Services {
+model Service {
   id String @id @default(uuid())
-  id_barbershop String
+  idBarbershop String
   name String
   price Decimal @db.Decimal(5, 2)
-  bookings Bookings[]
+  bookings Booking[]
+  barbershop Barbershop @relation(fields: [idBarbershop], references: [id])
+}
+
+model Phone {
+  id String @default(uuid()) @id
+  number String
+  barbershopId String
+  barbershop Barbershop @relation(fields: [barbershopId], references: [id])
 }
