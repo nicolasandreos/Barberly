@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const nunito = localFont({
+  /* Paths relative to this file; colocate under app/ so Next bundles the files */
+  src: [
+    {
+      path: "./fonts/Nunito-VariableFont_wght.ttf",
+      style: "normal",
+      weight: "200 1000",
+    },
+    {
+      path: "./fonts/Nunito-Italic-VariableFont_wght.ttf",
+      style: "italic",
+      weight: "200 1000",
+    },
+  ],
+  variable: "--font-nunito",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${nunito.variable} dark h-full font-sans antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
