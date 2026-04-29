@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
+import Header from "./components/header";
 
 export default function Home() {
-  return <Button className="w-max">Button</Button>;
+  return <Header />;
 }
