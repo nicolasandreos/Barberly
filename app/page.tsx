@@ -1,5 +1,7 @@
 import Header from "./components/header";
 import { getFormattedDate } from "@/lib/helpers";
+import SearchInput from "./components/search";
+import { MainContainer } from "./components/spacing";
 
 export default function Home() {
   return (
@@ -11,6 +13,9 @@ export default function Home() {
         </h2>
         <p>{getFormattedDate()}</p>
       </div>
+      <MainContainer>
+        <SearchInput />
+      </MainContainer>
     </>
   );
 }
