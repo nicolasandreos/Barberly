@@ -5,8 +5,25 @@ import { MainContainer } from "./components/spacing";
 import Category from "./components/category";
 import { categories } from "./constants/categories";
 import CurrentBooking from "./components/current-booking";
+import BarbershopsSection from "./components/barbershops-section";
 
 export default function Home() {
+  const recommendedBarbershops = [
+    {
+      name: "Barbershop 1",
+      location: "Barbershop 1 location",
+      image: "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
+    },
+  ];
+
+  const popularBarbershops = [
+    {
+      name: "Barbershop 2",
+      location: "Barbershop 2 location",
+      image: "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
+    },
+  ];
+
   return (
     <>
       <Header />
@@ -28,6 +45,11 @@ export default function Home() {
           ))}
         </div>
         <CurrentBooking />
+        <BarbershopsSection
+          title="RECOMMENDED"
+          barbershops={recommendedBarbershops}
+        />
+        <BarbershopsSection title="POPULAR" barbershops={popularBarbershops} />
       </MainContainer>
     </>
   );
