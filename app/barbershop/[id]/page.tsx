@@ -1,9 +1,9 @@
 import { MainContainer } from "@/app/_components/spacing";
 import { getBarbershopById } from "@/app/_data_access/barbershop";
-import { MapPinIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import BarbershopHeader from "./components/barbershop-header";
+import AboutBarbershop from "./components/about-barbershop";
 
 const BarbershopPage = async ({
   params,
@@ -28,6 +28,7 @@ const BarbershopPage = async ({
       </div>
       <MainContainer>
         <BarbershopHeader barbershop={barbershop} />
+        <AboutBarbershop barbershop={barbershop} />
       </MainContainer>
     </>
   );
