@@ -1,8 +1,9 @@
-import BarbershopCard, { BarbershopCardProps } from "./barbershop-card";
+import { Barbershop } from "@/generated/prisma/browser";
+import BarbershopCard from "./barbershop-card";
 
 interface BarbershopsSectionProps {
   title: string;
-  barbershops: BarbershopCardProps[];
+  barbershops: Barbershop[];
 }
 
 const BarbershopsSection = ({
@@ -12,9 +13,9 @@ const BarbershopsSection = ({
   return (
     <div className="flex flex-col gap-2">
       <p className="text-muted-foreground text-sm font-bold">{title}</p>
-      <div className="flex gap-4 overflow-x-auto">
+      <div className="no-scrollbar flex w-full gap-4 overflow-x-auto pb-1">
         {barbershops.map((barbershop) => (
-          <BarbershopCard key={barbershop.name} {...barbershop} />
+          <BarbershopCard key={barbershop.id} barbershop={barbershop} />
         ))}
       </div>
     </div>
