@@ -30,9 +30,9 @@ model Booking {
   status       BookingStatus
   startsAt     DateTime
   endsAt       DateTime
-  user         User          @relation(fields: [idUser], references: [id])
-  barbershop   Barbershop    @relation(fields: [idBarbershop], references: [id])
-  service      Service       @relation(fields: [idService], references: [id])
+  user         User          @relation(fields: [idUser], references: [id], onDelete: Cascade)
+  barbershop   Barbershop    @relation(fields: [idBarbershop], references: [id], onDelete: Cascade)
+  service      Service       @relation(fields: [idService], references: [id], onDelete: Cascade)
 }
 
 model Barbershop {
@@ -54,12 +54,12 @@ model Service {
   name         String
   price        Decimal    @db.Decimal(5, 2)
   bookings     Booking[]
-  barbershop   Barbershop @relation(fields: [idBarbershop], references: [id])
+  barbershop   Barbershop @relation(fields: [idBarbershop], references: [id], onDelete: Cascade)
 }
 
 model Phone {
   id           String     @id @default(uuid())
   number       String
   barbershopId String
-  barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Cascade)
 }

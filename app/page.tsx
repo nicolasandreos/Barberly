@@ -9,7 +9,7 @@ import BarbershopsSection from "./components/barbershops-section";
 import Footer from "./components/footer";
 
 export default function Home() {
-  // TODO Replace with actual data
+  // TODO Replace with actual data e colocar BANNER
   const recommendedBarbershops = [
     {
       name: "Barbershop 1",
