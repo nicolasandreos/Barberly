@@ -1,13 +1,15 @@
 import Header from "./components/header";
 import { getFormattedDate } from "@/lib/helpers";
 import SearchInput from "./components/search";
-import { MainContainer } from "./components/spacing";
+import { FooterSpacing, MainContainer } from "./components/spacing";
 import Category from "./components/category";
 import { categories } from "./constants/categories";
 import CurrentBooking from "./components/current-booking";
 import BarbershopsSection from "./components/barbershops-section";
+import Footer from "./components/footer";
 
 export default function Home() {
+  // TODO Replace with actual data
   const recommendedBarbershops = [
     {
       name: "Barbershop 1",
@@ -51,6 +53,8 @@ export default function Home() {
         />
         <BarbershopsSection title="POPULAR" barbershops={popularBarbershops} />
       </MainContainer>
+      <FooterSpacing />
+      <Footer />
     </>
   );
 }
