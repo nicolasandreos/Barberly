@@ -11,6 +11,7 @@ import {
   getPopularBarbershops,
   getRecommendedBarbershops,
 } from "./_data_access/barbershop";
+import Image from "next/image";
 
 export default async function Home() {
   const recommendedBarbershops = await getRecommendedBarbershops();
@@ -36,6 +37,9 @@ export default async function Home() {
               label={category.label}
             />
           ))}
+        </div>
+        <div className="relative h-[175px] w-full overflow-hidden rounded-2xl">
+          <Image src="/banner.jpg" alt="Banner" fill className="object-cover" />
         </div>
         <CurrentBooking />
         <BarbershopsSection
