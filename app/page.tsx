@@ -4,6 +4,7 @@ import SearchInput from "./components/search";
 import { MainContainer } from "./components/spacing";
 import Category from "./components/category";
 import { categories } from "./constants/categories";
+import CurrentBooking from "./components/current-booking";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
             />
           ))}
         </div>
+        <CurrentBooking />
       </MainContainer>
     </>
   );
