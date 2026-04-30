@@ -7,18 +7,15 @@ import { categories } from "./_constants/categories";
 import CurrentBooking from "./_components/current-booking";
 import BarbershopsSection from "./_components/barbershops-section";
 import Footer from "./_components/footer";
-import { getRecommendedBarbershops } from "./_data_access/barbershop";
+import {
+  getPopularBarbershops,
+  getRecommendedBarbershops,
+} from "./_data_access/barbershop";
 
 export default async function Home() {
   const recommendedBarbershops = await getRecommendedBarbershops();
 
-  const popularBarbershops = [
-    {
-      name: "Barbershop 2",
-      location: "Barbershop 2 location",
-      image: "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
-    },
-  ];
+  const popularBarbershops = await getPopularBarbershops();
 
   return (
     <>
