@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { Barbershop } from "@/generated/prisma/browser";
+import Link from "next/link";
 
 const BarbershopCard = ({ barbershop }: { barbershop: Barbershop }) => {
   return (
@@ -24,8 +25,12 @@ const BarbershopCard = ({ barbershop }: { barbershop: Barbershop }) => {
             {barbershop.address}
           </p>
         </div>
-        <Button variant="outline" className="h-9 w-full shrink-0 text-sm">
-          Book
+        <Button
+          variant="outline"
+          className="text-md h-9 w-full shrink-0"
+          asChild
+        >
+          <Link href={`/barbershop/${barbershop.id}`}>Book</Link>
         </Button>
       </div>
     </div>

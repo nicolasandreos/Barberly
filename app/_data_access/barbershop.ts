@@ -15,3 +15,14 @@ export const getPopularBarbershops = async (): Promise<Barbershop[]> => {
   const shuffledBarbershops = barbershops.sort(() => Math.random() - 0.5);
   return shuffledBarbershops.slice(0, 5);
 };
+
+export const getBarbershopById = async (
+  id: string,
+): Promise<Barbershop | null> => {
+  const barbershop = await db.barbershop.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  return barbershop;
+};
