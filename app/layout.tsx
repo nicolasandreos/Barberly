@@ -6,12 +6,12 @@ const nunito = localFont({
   /* Paths relative to this file; colocate under app/ so Next bundles the files */
   src: [
     {
-      path: "./fonts/Nunito-VariableFont_wght.ttf",
+      path: "./_fonts/Nunito-VariableFont_wght.ttf",
       style: "normal",
       weight: "200 1000",
     },
     {
-      path: "./fonts/Nunito-Italic-VariableFont_wght.ttf",
+      path: "./_fonts/Nunito-Italic-VariableFont_wght.ttf",
       style: "italic",
       weight: "200 1000",
     },

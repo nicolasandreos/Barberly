@@ -1,12 +1,12 @@
-import Header from "./components/header";
+import Header from "./_components/header";
 import { getFormattedDate } from "@/lib/helpers";
-import SearchInput from "./components/search";
-import { FooterSpacing, MainContainer } from "./components/spacing";
-import Category from "./components/category";
-import { categories } from "./constants/categories";
-import CurrentBooking from "./components/current-booking";
-import BarbershopsSection from "./components/barbershops-section";
-import Footer from "./components/footer";
+import SearchInput from "./_components/search";
+import { FooterSpacing, MainContainer } from "./_components/spacing";
+import Category from "./_components/category";
+import { categories } from "./_constants/categories";
+import CurrentBooking from "./_components/current-booking";
+import BarbershopsSection from "./_components/barbershops-section";
+import Footer from "./_components/footer";
 
 export default function Home() {
   // TODO Replace with actual data e colocar BANNER
