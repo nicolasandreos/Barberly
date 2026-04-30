@@ -1,9 +1,10 @@
 import { Avatar, AvatarImage } from "./ui/avatar";
+import Subtitle from "./subtitle";
 
 const CurrentBooking = () => {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-muted-foreground text-sm font-bold">BOOKINGS</p>
+      <Subtitle>BOOKINGS</Subtitle>
       <div className="bg-card flex justify-between overflow-hidden rounded-xl border border-white/10">
         <div className="flex flex-col gap-2 p-4">
           <span className="text-muted-foreground w-max rounded-full bg-[#221C3D] px-2 py-1 text-center text-sm">
