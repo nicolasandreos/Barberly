@@ -8,6 +8,7 @@ import ServicesSection from "./components/services-section";
 import BarbershopContactSection from "./components/barbershop-contact-section";
 import { getServicesByBarbershopId } from "@/app/_data_access/services";
 import Footer from "@/app/_components/footer";
+import BarbershopHeroActions from "./components/barbershop-hero-actions";
 
 const BarbershopPage = async ({
   params,
@@ -32,6 +33,7 @@ const BarbershopPage = async ({
           fill
           className="object-cover"
         />
+        <BarbershopHeroActions />
       </div>
       <MainContainer>
         <BarbershopHeader barbershop={barbershop} />
