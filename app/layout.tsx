@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Toaster } from "@/app/_components/ui/sonner";
 import "./globals.css";
 
 const nunito = localFont({
@@ -35,7 +36,10 @@ export default function RootLayout({
       lang="en"
       className={`${nunito.variable} dark h-full font-sans antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        {children}
+        <Toaster position="bottom-center" closeButton />
+      </body>
     </html>
   );
 }

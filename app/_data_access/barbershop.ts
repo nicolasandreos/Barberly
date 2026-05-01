@@ -1,7 +1,12 @@
 "server-only";
 
+import type { Prisma } from "@/generated/prisma/client";
 import { Barbershop } from "@/generated/prisma/browser";
 import { db } from "@/lib/db";
+
+export type BarbershopWithPhones = Prisma.BarbershopGetPayload<{
+  include: { phones: true };
+}>;
 
 export const getRecommendedBarbershops = async (): Promise<Barbershop[]> => {
   const barbershops = await db.barbershop.findMany({});
@@ -18,10 +23,13 @@ export const getPopularBarbershops = async (): Promise<Barbershop[]> => {
 
 export const getBarbershopById = async (
   id: string,
-): Promise<Barbershop | null> => {
+): Promise<BarbershopWithPhones | null> => {
   const barbershop = await db.barbershop.findUnique({
     where: {
       id: id,
+    },
+    include: {
+      phones: true,
     },
   });
   return barbershop;
