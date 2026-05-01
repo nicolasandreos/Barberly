@@ -54,6 +54,7 @@ model Service {
   name         String
   price        Decimal    @db.Decimal(5, 2)
   description  String
+  imageUrl     String
   bookings     Booking[]
   barbershop   Barbershop @relation(fields: [idBarbershop], references: [id], onDelete: Cascade)
 }
