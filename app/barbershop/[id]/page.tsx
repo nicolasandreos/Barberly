@@ -4,17 +4,22 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import BarbershopHeader from "./components/barbershop-header";
 import AboutBarbershop from "./components/about-barbershop";
+import ServicesSection from "./components/services-section";
+import { getServicesByBarbershopId } from "@/app/_data_access/services";
 
 const BarbershopPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const { id } = await params;
-  const barbershop = await getBarbershopById(id);
+  const { id: idBarbershop } = await params;
+  const barbershop = await getBarbershopById(idBarbershop);
+
   if (!barbershop) {
     notFound();
   }
+
+  const services = await getServicesByBarbershopId(idBarbershop);
 
   return (
     <>
@@ -29,6 +34,15 @@ const BarbershopPage = async ({
       <MainContainer>
         <BarbershopHeader barbershop={barbershop} />
         <AboutBarbershop barbershop={barbershop} />
+        {services.length > 0 ? (
+          <ServicesSection services={services} />
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <p className="text-muted-foreground font-light">
+              No services found
+            </p>
+          </div>
+        )}
       </MainContainer>
     </>
   );
