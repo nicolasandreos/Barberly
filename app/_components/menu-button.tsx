@@ -15,6 +15,7 @@ import {
 import { CalendarDays, House, LogOut, Menu, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { categories } from "../_constants/categories";
+import SigninGoogleButton from "./signin-google-button";
 
 const MenuButton = ({ className }: { className?: string }) => {
   const mainItems = [
@@ -56,22 +57,11 @@ const MenuButton = ({ className }: { className?: string }) => {
         </SheetHeader>
 
         <div className="flex h-full flex-col px-2 pb-2">
-          <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-            <Avatar className="size-12 border border-violet-500/80">
-              <AvatarImage
-                src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?auto=format&fit=crop&w=120&q=80"
-                alt="Pedro Goncalves"
-              />
-              <AvatarFallback>PG</AvatarFallback>
-            </Avatar>
-            <div className="min-w-0">
-              <p className="truncate text-lg leading-none font-semibold text-white">
-                Pedro Goncalves
-              </p>
-              <p className="truncate pt-1 text-xs text-zinc-400">
-                pedrogoncalves@gmail.com
-              </p>
-            </div>
+          <div className="flex w-full items-center justify-between pb-6">
+            <h2 className="text-xl font-bold tracking-tight text-white">
+              Sign in to your account!
+            </h2>
+            <SigninGoogleButton />
           </div>
 
           <nav className="mt-4 space-y-1">
