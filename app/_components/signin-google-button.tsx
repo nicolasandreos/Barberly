@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
 import { Button } from "@/app/_components/ui/button";
 import {
   Dialog,
@@ -11,6 +15,17 @@ import {
 import { LogIn } from "lucide-react";
 
 const SigninGoogleButton = () => {
+  const [isSigningIn, setIsSigningIn] = useState(false);
+
+  async function handleGoogleSignIn() {
+    setIsSigningIn(true);
+    try {
+      await signIn("google", { callbackUrl: "/" });
+    } finally {
+      setIsSigningIn(false);
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -32,7 +47,9 @@ const SigninGoogleButton = () => {
           <Button
             variant="outline"
             type="button"
-            className="h-11 max-w-full min-w-56 gap-2.5 rounded-lg border-zinc-600 bg-transparent px-8 font-bold text-white hover:bg-white/10 hover:text-white dark:border-zinc-600 dark:bg-transparent dark:hover:bg-white/10"
+            className="h-11 max-w-full min-w-56 gap-2.5 rounded-lg border-zinc-600 bg-transparent px-8 font-bold text-white hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-50 dark:border-zinc-600 dark:bg-transparent dark:hover:bg-white/10"
+            disabled={isSigningIn}
+            onClick={handleGoogleSignIn}
           >
             <Image
               src="/google-icon.svg"

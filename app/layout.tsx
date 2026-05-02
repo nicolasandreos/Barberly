@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { AuthSessionProvider } from "@/app/_components/providers/auth-session-provider";
 import { Toaster } from "@/app/_components/ui/sonner";
 import "./globals.css";
 
@@ -37,7 +38,7 @@ export default function RootLayout({
       className={`${nunito.variable} dark h-full font-sans antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        {children}
+        <AuthSessionProvider>{children}</AuthSessionProvider>
         <Toaster position="bottom-center" closeButton />
       </body>
     </html>
