@@ -89,7 +89,7 @@ const BookingSheet = ({
       return;
     }
 
-    const startsAt = combineDateAndTime(selectedDate, selectedTime);
+    const startsAt = combineDateAndTime(selectedDate, selectedTime as string);
 
     startTransition(async () => {
       const result = await createBooking({
