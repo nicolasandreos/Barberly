@@ -2,20 +2,20 @@ import Header from "../_components/header";
 import SearchInput from "../_components/search";
 import Footer from "../_components/footer";
 import { MainContainer } from "../_components/spacing";
-import { getBarbershopsByName } from "../_data_access/barbershop";
 import { capitalize } from "@/lib/helpers";
 import Subtitle from "../_components/subtitle";
-import BarbershopCard from "../_components/barbershop-card";
+import { getSercivesByCategory } from "../_data_access/services";
+import ServiceCard from "../_components/service-card";
 
-interface BarbershopPageProps {
+interface ServicePageProps {
   searchParams: Promise<{
-    barbershopName?: string;
+    category?: string;
   }>;
 }
 
-const BarbershopPage = async ({ searchParams }: BarbershopPageProps) => {
-  const { barbershopName } = await searchParams;
-  const barbershops = await getBarbershopsByName(barbershopName ?? "");
+const ServicePage = async ({ searchParams }: ServicePageProps) => {
+  const { category: categoryParam } = (await searchParams) ?? {};
+  const services = await getSercivesByCategory(categoryParam);
 
   return (
     <>
@@ -23,20 +23,20 @@ const BarbershopPage = async ({ searchParams }: BarbershopPageProps) => {
       <MainContainer>
         <div className="mt-6"></div>
         <SearchInput />
-        {barbershops && barbershops.length > 0 ? (
+        {services && services.length > 0 ? (
           <div className="space-y-3">
             <Subtitle>
-              {`RESULTS FOR: "${capitalize(barbershopName ?? "")}"`}
+              {`RESULTS FOR: "${capitalize(categoryParam ?? "")}"`}
             </Subtitle>
             <div className="flex flex-wrap justify-between gap-4">
-              {barbershops.map((barbershop) => (
-                <BarbershopCard key={barbershop.id} barbershop={barbershop} />
+              {services.map((service) => (
+                <ServiceCard key={service.id} service={service} />
               ))}
             </div>
           </div>
         ) : (
           <Subtitle>
-            {`NO RESULTS FOUND FOR: "${capitalize(barbershopName ?? "")}"`}
+            {`NO RESULTS FOUND FOR: "${capitalize(categoryParam ?? "")}"`}
           </Subtitle>
         )}
       </MainContainer>
@@ -46,4 +46,4 @@ const BarbershopPage = async ({ searchParams }: BarbershopPageProps) => {
   );
 };
 
-export default BarbershopPage;
+export default ServicePage;

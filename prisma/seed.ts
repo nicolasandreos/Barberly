@@ -57,6 +57,7 @@ async function main() {
   const serviceTemplates = [
     {
       name: "Corte de Cabelo",
+      category: "HAIR",
       description: "Estilo personalizado com as últimas tendências.",
       price: 60.0,
       imageUrl:
@@ -64,6 +65,7 @@ async function main() {
     },
     {
       name: "Barba",
+      category: "BEARD",
       description: "Modelagem completa para destacar sua masculinidade.",
       price: 40.0,
       imageUrl:
@@ -71,6 +73,7 @@ async function main() {
     },
     {
       name: "Pézinho",
+      category: "HAIR",
       description: "Acabamento perfeito para um visual renovado.",
       price: 35.0,
       imageUrl:
@@ -78,6 +81,7 @@ async function main() {
     },
     {
       name: "Sobrancelha",
+      category: "EYESBROWS",
       description: "Expressão acentuada com modelagem precisa.",
       price: 20.0,
       imageUrl:
@@ -85,6 +89,7 @@ async function main() {
     },
     {
       name: "Massagem",
+      category: "MASSAGE",
       description: "Relaxe com uma massagem revigorante.",
       price: 50.0,
       imageUrl:
@@ -92,6 +97,7 @@ async function main() {
     },
     {
       name: "Hidratação",
+      category: "HAIR",
       description: "Hidratação profunda para cabelo e barba.",
       price: 25.0,
       imageUrl:
@@ -117,6 +123,7 @@ async function main() {
         id: `service-${i + 1}-${j + 1}`,
         idBarbershop: shop.id,
         name: template.name,
+        category: template.category,
         description: template.description,
         imageUrl: template.imageUrl,
         price: template.price.toFixed(2),
@@ -199,6 +206,7 @@ async function main() {
       update: {
         idBarbershop: service.idBarbershop,
         name: service.name,
+        category: service.category,
         description: service.description,
         imageUrl: service.imageUrl,
         price: service.price,

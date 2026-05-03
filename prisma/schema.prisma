@@ -61,6 +61,13 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum ServiceCategory {
+  HAIR
+  BEARD
+  EYESBROWS
+  MASSAGE
+}
+
 model Booking {
   id           String        @id @default(uuid())
   idUser       String
@@ -91,6 +98,7 @@ model Service {
   id           String     @id @default(uuid())
   idBarbershop String
   name         String
+  category     ServiceCategory
   price        Decimal    @db.Decimal(5, 2)
   description  String
   imageUrl     String
