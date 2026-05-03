@@ -23,3 +23,7 @@ export const formatCurrency = (value: number) => {
     currency: "BRL",
   }).format(value);
 };
+
+export const capitalize = (string: string) => {
+  return string.toUpperCase();
+};

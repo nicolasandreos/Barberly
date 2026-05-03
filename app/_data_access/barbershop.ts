@@ -34,3 +34,16 @@ export const getBarbershopById = async (
   });
   return barbershop;
 };
+
+export const getBarbershopsByName = async (
+  name: string,
+): Promise<Barbershop[] | null> => {
+  const barbershops = await db.barbershop.findMany({
+    where: {
+      name: {
+        contains: name,
+      },
+    },
+  });
+  return barbershops ?? null;
+};
