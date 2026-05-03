@@ -12,6 +12,7 @@ import {
   getRecommendedBarbershops,
 } from "./_data_access/barbershop";
 import Image from "next/image";
+import UserGreetings from "./_components/user-greetings";
 
 export default async function Home() {
   const recommendedBarbershops = await getRecommendedBarbershops();
@@ -22,9 +23,7 @@ export default async function Home() {
     <>
       <Header />
       <div className="space-y-1 px-5 py-6">
-        <h2 className="text-2xl">
-          Olá, <span className="font-bold">Nicolas!</span>
-        </h2>
+        <UserGreetings />
         <p>{getFormattedDate()}</p>
       </div>
       <MainContainer>
