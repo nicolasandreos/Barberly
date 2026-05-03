@@ -16,6 +16,7 @@ import SigninGoogleButton from "./signin-google-button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import UserInformation from "./user-information";
 import { User } from "@/generated/prisma/client";
+import { useRouter } from "next/navigation";
 
 const MenuButton = ({ className }: { className?: string }) => {
   const mainItems = [
@@ -30,6 +31,8 @@ const MenuButton = ({ className }: { className?: string }) => {
   const handleSignIn = () => {
     signIn("google");
   };
+
+  const router = useRouter();
 
   return (
     <Sheet>
@@ -103,6 +106,9 @@ const MenuButton = ({ className }: { className?: string }) => {
             {categories.map((category) => {
               return (
                 <button
+                  onClick={() => {
+                    router.push(`/service?category=${category.label}`);
+                  }}
                   key={category.label}
                   type="button"
                   className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm text-zinc-100 transition-colors hover:bg-white/10"
