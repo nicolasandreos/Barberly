@@ -1,0 +1,186 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { ptBR as ptDayPicker } from "react-day-picker/locale";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/app/_components/ui/sheet";
+import { Calendar } from "@/app/_components/ui/calendar";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
+import { XIcon } from "lucide-react";
+
+const DEFAULT_TIMES = [
+  "09:00",
+  "09:45",
+  "10:30",
+  "11:15",
+  "13:00",
+  "14:00",
+  "15:30",
+  "16:00",
+];
+
+const BookingSheet = ({
+  isOpen,
+  onClose,
+  serviceName = "Corte de Cabelo",
+  priceBrl = 50,
+  barbershopName = "Vintage Barber",
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  serviceName?: string;
+  priceBrl?: number;
+  barbershopName?: string;
+}) => {
+  const [selectedDate, setSelectedDate] = useState(() => new Date(2026, 1, 6));
+  const [selectedTime, setSelectedTime] = useState("09:45");
+
+  const priceLabel = useMemo(
+    () =>
+      new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(priceBrl),
+    [priceBrl],
+  );
+
+  const summaryDateLabel = useMemo(
+    () => format(selectedDate, "dd 'de' MMMM", { locale: ptBR }),
+    [selectedDate],
+  );
+
+  return (
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <SheetContent
+        showCloseButton={false}
+        className="bg-card flex h-full max-h-[100dvh] w-full flex-col gap-0 border-white/10 px-4 py-5 text-white sm:max-w-lg"
+      >
+        <SheetHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-0 border-b border-white/10 p-0 px-1 pb-4">
+          <SheetTitle className="text-lg font-semibold tracking-tight text-white">
+            Fazer Reserva
+          </SheetTitle>
+          <SheetDescription className="sr-only">
+            Escolha data e horário para confirmar sua reserva.
+          </SheetDescription>
+          <SheetClose asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-9 shrink-0 text-white hover:bg-white/10"
+              aria-label="Fechar"
+            >
+              <XIcon className="size-5" />
+            </Button>
+          </SheetClose>
+        </SheetHeader>
+
+        <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-1 py-5">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={(date) => date && setSelectedDate(date)}
+            defaultMonth={selectedDate}
+            locale={ptDayPicker}
+            className="w-full max-w-none bg-transparent p-0 text-white [--cell-size:2.25rem] [&_.rdp-weekday]:uppercase [&_button[data-selected-single=true]]:rounded-full"
+            classNames={{
+              month_caption:
+                "text-sm font-medium capitalize text-white justify-start px-1",
+              nav: "absolute inset-x-0 top-0 flex w-full items-center justify-end gap-0.5",
+              button_previous:
+                "size-8 text-white hover:bg-white/10 aria-disabled:opacity-40",
+              button_next:
+                "size-8 text-white hover:bg-white/10 aria-disabled:opacity-40",
+              weekday:
+                "text-muted-foreground text-[0.7rem] font-normal uppercase",
+              day: "text-white",
+              outside: "text-muted-foreground opacity-50",
+              disabled: "text-muted-foreground opacity-40",
+            }}
+          />
+
+          <div className="border-t border-white/10" />
+
+          <div className="space-y-2">
+            <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+              {DEFAULT_TIMES.map((t) => (
+                <Button
+                  key={t}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedTime(t)}
+                  className={cn(
+                    "h-9 shrink-0 rounded-full border-white/20 px-4 text-sm font-medium text-white hover:bg-white/10",
+                    selectedTime === t &&
+                      "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
+                  )}
+                >
+                  {t}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-white/10" />
+
+          <div className="bg-secondary/80 space-y-4 rounded-xl border border-white/5 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <span className="text-sm font-semibold text-white">
+                {serviceName}
+              </span>
+              <span className="text-sm font-semibold text-white">
+                {priceLabel}
+              </span>
+            </div>
+            <dl className="space-y-2 text-sm">
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground shrink-0">Data</dt>
+                <dd className="text-right font-medium text-white">
+                  {summaryDateLabel}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground shrink-0">Horário</dt>
+                <dd className="text-right font-medium text-white">
+                  {selectedTime}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-4">
+                <dt className="text-muted-foreground shrink-0">Barbearia</dt>
+                <dd className="text-right font-medium text-white">
+                  {barbershopName}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div className="shrink-0 border-t border-white/10 pt-4">
+          <Button
+            type="button"
+            className="h-11 w-full rounded-xl text-base font-semibold"
+            onClick={onClose}
+          >
+            Confirmar
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+export default BookingSheet;
