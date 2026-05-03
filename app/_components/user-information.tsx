@@ -1,22 +1,18 @@
+import { User } from "@/generated/prisma/client";
 import { AvatarFallback, AvatarImage, Avatar } from "./ui/avatar";
 
-const UserInformation = () => {
+const UserInformation = ({ user }: { user: User }) => {
   return (
     <div className="flex items-center gap-3 border-b border-white/10 pb-4">
       <Avatar className="size-12 border border-violet-500/80">
-        <AvatarImage
-          src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?auto=format&fit=crop&w=120&q=80"
-          alt="Pedro Goncalves"
-        />
+        <AvatarImage src={user.image ?? ""} alt={user.name ?? ""} />
         <AvatarFallback>PG</AvatarFallback>
       </Avatar>
       <div className="min-w-0">
         <p className="truncate text-lg leading-none font-semibold text-white">
-          Pedro Goncalves
+          {user.name}
         </p>
-        <p className="truncate pt-1 text-xs text-zinc-400">
-          pedrogoncalves@gmail.com
-        </p>
+        <p className="truncate pt-1 text-xs text-zinc-400">{user.email}</p>
       </div>
     </div>
   );

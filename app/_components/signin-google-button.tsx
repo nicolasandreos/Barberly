@@ -14,18 +14,7 @@ import {
 } from "@/app/_components/ui/dialog";
 import { LogIn } from "lucide-react";
 
-const SigninGoogleButton = () => {
-  const [isSigningIn, setIsSigningIn] = useState(false);
-
-  async function handleGoogleSignIn() {
-    setIsSigningIn(true);
-    try {
-      await signIn("google", { callbackUrl: "/" });
-    } finally {
-      setIsSigningIn(false);
-    }
-  }
-
+const SigninGoogleButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -48,8 +37,7 @@ const SigninGoogleButton = () => {
             variant="outline"
             type="button"
             className="h-11 max-w-full min-w-56 gap-2.5 rounded-lg border-zinc-600 bg-transparent px-8 font-bold text-white hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-50 dark:border-zinc-600 dark:bg-transparent dark:hover:bg-white/10"
-            disabled={isSigningIn}
-            onClick={handleGoogleSignIn}
+            onClick={onClick}
           >
             <Image
               src="/google-icon.svg"
