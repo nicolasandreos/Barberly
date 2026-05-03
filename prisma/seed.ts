@@ -139,11 +139,11 @@ async function main() {
   );
 
   const statuses = [
-    "PENDING",
+    "DONE",
     "CONFIRMED",
     "CANCELLED",
     "CONFIRMED",
-    "PENDING",
+    "DONE",
   ] as const;
 
   const bookings = Array.from({ length: 5 }, (_, i) => {

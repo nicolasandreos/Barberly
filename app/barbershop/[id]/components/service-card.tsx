@@ -33,7 +33,9 @@ const ServiceCard = ({
           </p>
           <ButtonBook
             barbershopName={barbershopName}
+            barbershopId={service.idBarbershop}
             serviceName={service.name}
+            serviceId={service.id}
             priceBrl={Number(service.price)}
           />
         </div>

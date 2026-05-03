@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ptBR as ptDayPicker } from "react-day-picker/locale";
+import { useSession } from "next-auth/react";
 import {
   Sheet,
   SheetClose,
@@ -16,6 +17,8 @@ import { Calendar } from "@/app/_components/ui/calendar";
 import { Button, buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
+import createBooking from "../_actions/booking";
+import { toast } from "sonner";
 
 const DEFAULT_TIMES = [
   "09:00",
@@ -33,21 +36,34 @@ const navButtonClass = cn(
   "size-8 shrink-0 text-white hover:bg-white/10 aria-disabled:opacity-40",
 );
 
+function combineDateAndTime(date: Date, timeHHmm: string): Date {
+  const [hours, minutes] = timeHHmm.split(":").map((n) => Number(n));
+  const next = new Date(date);
+  next.setHours(hours, minutes, 0, 0);
+  return next;
+}
+
 const BookingSheet = ({
   isOpen,
   onClose,
   serviceName = "Corte de Cabelo",
   priceBrl = 50,
   barbershopName = "Vintage Barber",
+  barbershopId,
+  serviceId,
 }: {
   isOpen: boolean;
   onClose: () => void;
   serviceName?: string;
   priceBrl?: number;
   barbershopName?: string;
+  barbershopId?: string;
+  serviceId?: string;
 }) => {
-  const [selectedDate, setSelectedDate] = useState(() => new Date(2026, 1, 6));
-  const [selectedTime, setSelectedTime] = useState<string>("09:45");
+  const { data: session, status } = useSession();
+  const [isPending, startTransition] = useTransition();
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const priceLabel = useMemo(
     () =>
@@ -62,6 +78,47 @@ const BookingSheet = ({
     () => format(selectedDate, "dd 'de' MMMM", { locale: ptBR }),
     [selectedDate],
   );
+
+  const handleCreateBooking = () => {
+    if (!barbershopId || !serviceId) {
+      toast.error("Dados do serviço indisponíveis para reservar.");
+      return;
+    }
+    if (status !== "authenticated" || !session?.user?.id) {
+      toast.error("Inicie sessão para criar uma reserva.");
+      return;
+    }
+
+    const startsAt = combineDateAndTime(selectedDate, selectedTime);
+
+    startTransition(async () => {
+      const result = await createBooking({
+        idBarbershop: barbershopId,
+        idService: serviceId,
+        startsAt: startsAt.toISOString(),
+      });
+
+      if (result.ok) {
+        toast.success("Reserva criada com sucesso");
+        onClose();
+        return;
+      }
+
+      if (result.error === "UNAUTHENTICATED") {
+        toast.error("Sessão expirada. Inicie sessão novamente.");
+        return;
+      }
+      if (result.error === "INVALID_DATE") {
+        toast.error("Data ou horário inválido.");
+        return;
+      }
+      if (result.error === "SERVICE_NOT_FOUND") {
+        toast.error("Serviço não encontrado nesta barbearia.");
+        return;
+      }
+      toast.error("Erro ao criar reserva.");
+    });
+  };
 
   return (
     <Sheet
@@ -179,9 +236,10 @@ const BookingSheet = ({
           <Button
             type="button"
             className="h-11 w-full rounded-xl text-base font-semibold"
-            onClick={onClose}
+            disabled={isPending}
+            onClick={handleCreateBooking}
           >
-            Confirmar
+            {isPending ? "Salvando…" : "Confirmar"}
           </Button>
         </div>
       </SheetContent>

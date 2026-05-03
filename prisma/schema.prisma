@@ -56,7 +56,7 @@ model VerificationToken {
 }
 
 enum BookingStatus {
-  PENDING
+  DONE
   CONFIRMED
   CANCELLED
 }

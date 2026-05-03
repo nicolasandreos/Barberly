@@ -8,12 +8,16 @@ import BookingSheet from "./booking-sheet";
 const ButtonBook = ({
   className,
   barbershopName,
+  barbershopId,
   serviceName,
+  serviceId,
   priceBrl,
 }: {
   className?: string;
   barbershopName?: string;
+  barbershopId?: string;
   serviceName?: string;
+  serviceId?: string;
   priceBrl?: number;
 }) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -37,7 +41,9 @@ const ButtonBook = ({
         isOpen={isSheetOpen}
         onClose={handleCloseSheet}
         barbershopName={barbershopName}
+        barbershopId={barbershopId}
         serviceName={serviceName}
+        serviceId={serviceId}
         priceBrl={priceBrl}
       />
     </>
