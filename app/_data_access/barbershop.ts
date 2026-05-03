@@ -21,6 +21,11 @@ export const getPopularBarbershops = async (): Promise<Barbershop[]> => {
   return shuffledBarbershops.slice(0, 5);
 };
 
+export const getAllBarbershops = async (): Promise<Barbershop[]> => {
+  const barbershops = await db.barbershop.findMany({});
+  return barbershops;
+};
+
 export const getBarbershopById = async (
   id: string,
 ): Promise<BarbershopWithPhones | null> => {
@@ -38,6 +43,9 @@ export const getBarbershopById = async (
 export const getBarbershopsByName = async (
   name: string,
 ): Promise<Barbershop[] | null> => {
+  if (name.length === 0 || name.trim() === "") {
+    return getAllBarbershops();
+  }
   const barbershops = await db.barbershop.findMany({
     where: {
       name: {
