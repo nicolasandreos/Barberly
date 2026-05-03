@@ -5,7 +5,17 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import BookingSheet from "./booking-sheet";
 
-const ButtonBook = ({ className }: { className?: string }) => {
+const ButtonBook = ({
+  className,
+  barbershopName,
+  serviceName,
+  priceBrl,
+}: {
+  className?: string;
+  barbershopName?: string;
+  serviceName?: string;
+  priceBrl?: number;
+}) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleOpenSheet = () => {
@@ -23,7 +33,13 @@ const ButtonBook = ({ className }: { className?: string }) => {
       >
         Book
       </Button>
-      <BookingSheet isOpen={isSheetOpen} onClose={handleCloseSheet} />
+      <BookingSheet
+        isOpen={isSheetOpen}
+        onClose={handleCloseSheet}
+        barbershopName={barbershopName}
+        serviceName={serviceName}
+        priceBrl={priceBrl}
+      />
     </>
   );
 };

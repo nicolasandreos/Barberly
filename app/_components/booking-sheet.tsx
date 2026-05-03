@@ -13,7 +13,7 @@ import {
   SheetTitle,
 } from "@/app/_components/ui/sheet";
 import { Calendar } from "@/app/_components/ui/calendar";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
 
@@ -27,6 +27,11 @@ const DEFAULT_TIMES = [
   "15:30",
   "16:00",
 ];
+
+const navButtonClass = cn(
+  buttonVariants({ variant: "ghost", size: "icon" }),
+  "size-8 shrink-0 text-white hover:bg-white/10 aria-disabled:opacity-40",
+);
 
 const BookingSheet = ({
   isOpen,
@@ -42,7 +47,7 @@ const BookingSheet = ({
   barbershopName?: string;
 }) => {
   const [selectedDate, setSelectedDate] = useState(() => new Date(2026, 1, 6));
-  const [selectedTime, setSelectedTime] = useState("09:45");
+  const [selectedTime, setSelectedTime] = useState<string>("09:45");
 
   const priceLabel = useMemo(
     () =>
@@ -67,7 +72,7 @@ const BookingSheet = ({
     >
       <SheetContent
         showCloseButton={false}
-        className="bg-card flex h-full max-h-[100dvh] w-full flex-col gap-0 border-white/10 px-4 py-5 text-white sm:max-w-lg"
+        className="bg-card flex h-full max-h-dvh w-full flex-col gap-0 border-white/10 px-4 py-5 text-white sm:max-w-lg"
       >
         <SheetHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-0 border-b border-white/10 p-0 px-1 pb-4">
           <SheetTitle className="text-lg font-semibold tracking-tight text-white">
@@ -95,15 +100,13 @@ const BookingSheet = ({
             onSelect={(date) => date && setSelectedDate(date)}
             defaultMonth={selectedDate}
             locale={ptDayPicker}
-            className="w-full max-w-none bg-transparent p-0 text-white [--cell-size:2.25rem] [&_.rdp-weekday]:uppercase [&_button[data-selected-single=true]]:rounded-full"
+            className="w-full max-w-none bg-transparent px-0 py-1 text-white [--cell-size:2.75rem] [&_.rdp-weekday]:uppercase [&_button[data-selected-single=true]]:rounded-full"
             classNames={{
               month_caption:
                 "text-sm font-medium capitalize text-white justify-start px-1",
               nav: "absolute inset-x-0 top-0 flex w-full items-center justify-end gap-0.5",
-              button_previous:
-                "size-8 text-white hover:bg-white/10 aria-disabled:opacity-40",
-              button_next:
-                "size-8 text-white hover:bg-white/10 aria-disabled:opacity-40",
+              button_previous: navButtonClass,
+              button_next: navButtonClass,
               weekday:
                 "text-muted-foreground text-[0.7rem] font-normal uppercase",
               day: "text-white",
@@ -116,22 +119,25 @@ const BookingSheet = ({
 
           <div className="space-y-2">
             <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
-              {DEFAULT_TIMES.map((t) => (
-                <Button
-                  key={t}
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSelectedTime(t)}
-                  className={cn(
-                    "h-9 shrink-0 rounded-full border-white/20 px-4 text-sm font-medium text-white hover:bg-white/10",
-                    selectedTime === t &&
-                      "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
-                  )}
-                >
-                  {t}
-                </Button>
-              ))}
+              {DEFAULT_TIMES.map((t) => {
+                const selected = selectedTime === t;
+                return (
+                  <Button
+                    key={t}
+                    type="button"
+                    variant={selected ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedTime(t)}
+                    className={cn(
+                      "h-9 shrink-0 rounded-full px-4 text-sm font-medium",
+                      !selected &&
+                        "border-white/20 text-white hover:bg-white/10",
+                    )}
+                  >
+                    {t}
+                  </Button>
+                );
+              })}
             </div>
           </div>
 
@@ -169,7 +175,7 @@ const BookingSheet = ({
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-white/10 pt-4">
+        <div className="shrink-0 pt-4">
           <Button
             type="button"
             className="h-11 w-full rounded-xl text-base font-semibold"

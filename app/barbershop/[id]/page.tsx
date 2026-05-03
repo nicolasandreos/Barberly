@@ -40,7 +40,10 @@ const BarbershopPage = async ({
         <BarbershopHeader barbershop={barbershop} />
         <AboutBarbershop barbershop={barbershop} />
         {services.length > 0 ? (
-          <ServicesSection services={services} />
+          <ServicesSection
+            services={services}
+            barbershopName={barbershop.name}
+          />
         ) : (
           <div className="flex h-full items-center justify-center">
             <p className="text-muted-foreground font-light">

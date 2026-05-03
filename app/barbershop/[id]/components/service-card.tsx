@@ -1,10 +1,15 @@
 import ButtonBook from "@/app/_components/book-button";
-import { Button } from "@/app/_components/ui/button";
 import { Service } from "@/generated/prisma/browser";
 import { formatCurrency } from "@/lib/helpers";
 import Image from "next/image";
 
-const ServiceCard = ({ service }: { service: Service }) => {
+const ServiceCard = ({
+  service,
+  barbershopName,
+}: {
+  service: Service;
+  barbershopName: string;
+}) => {
   return (
     <div className="bg-card flex gap-3 rounded-xl p-2">
       <div className="relative h-[110px] w-[110px] shrink-0 self-start overflow-hidden rounded-xl">
@@ -26,7 +31,11 @@ const ServiceCard = ({ service }: { service: Service }) => {
           <p className="text-primary font-bold">
             {formatCurrency(Number(service.price))}
           </p>
-          <ButtonBook />
+          <ButtonBook
+            barbershopName={barbershopName}
+            serviceName={service.name}
+            priceBrl={Number(service.price)}
+          />
         </div>
       </div>
     </div>
