@@ -6,13 +6,6 @@ import { db } from "@/lib/db";
 import { addMinutes } from "date-fns";
 import { BookingStatus } from "@/generated/prisma/client";
 
-export type CreateBookingInput = {
-  idBarbershop: string;
-  idService: string;
-  /** ISO 8601 */
-  startsAt: string;
-};
-
 export type CreateBookingResult =
   | { ok: true; bookingId: string }
   | {
@@ -20,9 +13,17 @@ export type CreateBookingResult =
       error: "UNAUTHENTICATED" | "INVALID_DATE" | "SERVICE_NOT_FOUND";
     };
 
+export type CreateBookingInput = {
+  idBarbershop: string;
+  idService: string;
+  /** Instante único em ISO 8601 UTC (ex.: 9h em Brasília → …T12:00:00.000Z). */
+  startsAt: string;
+};
+
 async function createBooking(
   input: CreateBookingInput,
 ): Promise<CreateBookingResult> {
+  console.log(input);
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return { ok: false, error: "UNAUTHENTICATED" };

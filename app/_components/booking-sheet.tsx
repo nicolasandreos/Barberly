@@ -36,11 +36,14 @@ const navButtonClass = cn(
   "size-8 shrink-0 text-white hover:bg-white/10 aria-disabled:opacity-40",
 );
 
-function combineDateAndTime(date: Date, timeHHmm: string): Date {
-  const [hours, minutes] = timeHHmm.split(":").map((n) => Number(n));
-  const next = new Date(date);
-  next.setHours(hours, minutes, 0, 0);
-  return next;
+/**
+ * Cria uma string ISO "naive" (sem timezone) no formato UTC.
+ * Exemplo: data=2026-05-04, hora=09:00 → "2026-05-04T09:00:00.000Z"
+ * ATENÇÃO: Isso NÃO considera fuso horário. O valor UTC será literal.
+ */
+function combineDateAndTime(date: Date, timeHHmm: string): string {
+  const ymd = format(date, "yyyy-MM-dd");
+  return `${ymd}T${timeHHmm}:00.000Z`;
 }
 
 const BookingSheet = ({
@@ -95,7 +98,7 @@ const BookingSheet = ({
       const result = await createBooking({
         idBarbershop: barbershopId,
         idService: serviceId,
-        startsAt: startsAt.toISOString(),
+        startsAt: startsAt,
       });
 
       if (result.ok) {
@@ -236,7 +239,7 @@ const BookingSheet = ({
           <Button
             type="button"
             className="h-11 w-full rounded-xl text-base font-semibold"
-            disabled={isPending}
+            disabled={isPending || !selectedDate || !selectedTime}
             onClick={handleCreateBooking}
           >
             {isPending ? "Salvando…" : "Confirmar"}
