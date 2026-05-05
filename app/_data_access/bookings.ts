@@ -30,7 +30,7 @@ export const getUserCurrentBookings = async () => {
   const bookings = await db.booking.findMany({
     include: {
       service: true,
-      barbershop: true,
+      barbershop: { include: { phones: true } },
     },
     where: {
       idUser: session.user.id,
@@ -67,12 +67,18 @@ export const getUserBookings = async () => {
   await markPastConfirmedAsDone(session.user.id);
   const [confirmed, finished] = await Promise.all([
     db.booking.findMany({
-      include: { service: true, barbershop: true },
+      include: {
+        service: true,
+        barbershop: { include: { phones: true } },
+      },
       where: { idUser: session.user.id, status: BookingStatus.CONFIRMED },
       orderBy: { startsAt: "asc" },
     }),
     db.booking.findMany({
-      include: { service: true, barbershop: true },
+      include: {
+        service: true,
+        barbershop: { include: { phones: true } },
+      },
       where: { idUser: session.user.id, status: BookingStatus.DONE },
       orderBy: { startsAt: "desc" },
     }),

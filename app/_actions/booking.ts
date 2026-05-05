@@ -77,4 +77,40 @@ async function createBooking(
   return { ok: true, bookingId: booking.id };
 }
 
+export type CancelBookingResult =
+  | { ok: true }
+  | {
+      ok: false;
+      error: "UNAUTHENTICATED" | "NOT_FOUND" | "INVALID_STATE";
+    };
+
+export async function cancelBooking(
+  bookingId: string,
+): Promise<CancelBookingResult> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { ok: false, error: "UNAUTHENTICATED" };
+  }
+
+  const booking = await db.booking.findFirst({
+    where: { id: bookingId, idUser: session.user.id },
+  });
+  if (!booking) {
+    return { ok: false, error: "NOT_FOUND" };
+  }
+  if (booking.status !== BookingStatus.CONFIRMED) {
+    return { ok: false, error: "INVALID_STATE" };
+  }
+
+  await db.booking.update({
+    where: { id: bookingId },
+    data: { status: BookingStatus.CANCELLED },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/bookings");
+
+  return { ok: true };
+}
+
 export default createBooking;

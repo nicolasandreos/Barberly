@@ -5,13 +5,15 @@ import { ptBR } from "date-fns/locale";
 import { BookingStatus } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 
+export type BookingWithDetails = Prisma.BookingGetPayload<{
+  include: {
+    service: true;
+    barbershop: { include: { phones: true } };
+  };
+}>;
+
 type BookingCardProps = {
-  booking: Prisma.BookingGetPayload<{
-    include: {
-      service: true;
-      barbershop: true;
-    };
-  }>;
+  booking: BookingWithDetails;
   compact?: boolean;
 };
 

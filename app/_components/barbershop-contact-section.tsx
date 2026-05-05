@@ -5,9 +5,11 @@ import Subtitle from "@/app/_components/subtitle";
 import { Phone } from "@/generated/prisma/browser";
 import { Smartphone } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type BarbershopContactSectionProps = {
   phones: Pick<Phone, "id" | "number">[];
+  className?: string;
 };
 
 async function copyToClipboard(value: string) {
@@ -25,13 +27,14 @@ async function copyToClipboard(value: string) {
 
 const BarbershopContactSection = ({
   phones,
+  className,
 }: BarbershopContactSectionProps) => {
   if (phones.length === 0) {
     return null;
   }
 
   return (
-    <div className="mb-6 flex flex-col gap-4">
+    <div className={cn("mb-6 flex flex-col gap-4", className)}>
       <Subtitle>CONTATO</Subtitle>
       <ul className="flex flex-col gap-4">
         {phones.map((phone) => (

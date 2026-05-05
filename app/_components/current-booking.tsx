@@ -1,16 +1,11 @@
 import Subtitle from "./subtitle";
-import { Prisma } from "@/generated/prisma/client";
-import BookingCard from "./booking-card";
+import type { BookingWithDetails } from "./booking-card";
+import BookingCardOpenable from "./booking-card-openable";
 
 const CurrentBooking = async ({
   bookings: userCurrentBookings,
 }: {
-  bookings: Prisma.BookingGetPayload<{
-    include: {
-      service: true;
-      barbershop: true;
-    };
-  }>[];
+  bookings: BookingWithDetails[];
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -18,7 +13,7 @@ const CurrentBooking = async ({
 
       <div className="no-scrollbar flex gap-4 overflow-x-auto">
         {userCurrentBookings.map((booking) => (
-          <BookingCard key={booking.id} booking={booking} compact />
+          <BookingCardOpenable key={booking.id} booking={booking} compact />
         ))}
       </div>
     </div>

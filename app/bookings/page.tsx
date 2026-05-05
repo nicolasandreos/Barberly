@@ -5,7 +5,7 @@ import Header from "@/app/_components/header";
 import Footer from "@/app/_components/footer";
 import { FooterSpacing, MainContainer } from "@/app/_components/spacing";
 import Subtitle from "@/app/_components/subtitle";
-import BookingCard from "@/app/_components/booking-card";
+import BookingCardOpenable from "@/app/_components/booking-card-openable";
 import { getUserBookings } from "@/app/_data_access/bookings";
 
 export default async function BookingsPage() {
@@ -28,7 +28,7 @@ export default async function BookingsPage() {
               <Subtitle>CONFIRMED</Subtitle>
               <div className="flex flex-col gap-3">
                 {data.confirmed.map((booking) => (
-                  <BookingCard key={booking.id} booking={booking} />
+                  <BookingCardOpenable key={booking.id} booking={booking} />
                 ))}
               </div>
             </div>
@@ -39,7 +39,7 @@ export default async function BookingsPage() {
               <Subtitle>FINISHED</Subtitle>
               <div className="flex flex-col gap-3">
                 {data.finished.map((booking) => (
-                  <BookingCard key={booking.id} booking={booking} />
+                  <BookingCardOpenable key={booking.id} booking={booking} />
                 ))}
               </div>
             </div>
