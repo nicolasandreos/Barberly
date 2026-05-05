@@ -21,6 +21,7 @@ import createBooking from "../_actions/booking";
 import { fetchBookedTimes } from "../_actions/availability";
 import { toast } from "sonner";
 import BookingSummaryCard from "./booking-summary-card";
+import { AppModal } from "@/app/_components/app-modal";
 
 const DEFAULT_TIMES = [
   "09:00",
@@ -81,6 +82,7 @@ const BookingSheet = ({
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [bookedKeys, setBookedKeys] = useState<Set<string>>(new Set());
+  const [bookingSuccessOpen, setBookingSuccessOpen] = useState(false);
 
   const priceLabel = useMemo(
     () =>
@@ -177,8 +179,8 @@ const BookingSheet = ({
       });
 
       if (result.ok) {
-        toast.success("Reserva criada com sucesso");
         onClose();
+        setBookingSuccessOpen(true);
         return;
       }
 
@@ -203,117 +205,128 @@ const BookingSheet = ({
   };
 
   return (
-    <Sheet
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
-      <SheetContent
-        showCloseButton={false}
-        className="bg-card flex h-full max-h-dvh w-full flex-col gap-0 border-white/10 px-4 py-5 text-white sm:max-w-lg"
+    <>
+      <Sheet
+        open={isOpen}
+        onOpenChange={(open) => {
+          if (!open) onClose();
+        }}
       >
-        <SheetHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-0 border-b border-white/10 p-0 px-1 pb-4">
-          <SheetTitle className="text-lg font-semibold tracking-tight text-white">
-            Fazer Reserva
-          </SheetTitle>
-          <SheetDescription className="sr-only">
-            Escolha data e horário para confirmar sua reserva.
-          </SheetDescription>
-          <SheetClose asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-9 shrink-0 text-white hover:bg-white/10"
-              aria-label="Fechar"
-            >
-              <XIcon className="size-5" />
-            </Button>
-          </SheetClose>
-        </SheetHeader>
+        <SheetContent
+          showCloseButton={false}
+          className="bg-card flex h-full max-h-dvh w-full flex-col gap-0 border-white/10 px-4 py-5 text-white sm:max-w-lg"
+        >
+          <SheetHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-0 border-b border-white/10 p-0 px-1 pb-4">
+            <SheetTitle className="text-lg font-semibold tracking-tight text-white">
+              Fazer Reserva
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              Escolha data e horário para confirmar sua reserva.
+            </SheetDescription>
+            <SheetClose asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-9 shrink-0 text-white hover:bg-white/10"
+                aria-label="Fechar"
+              >
+                <XIcon className="size-5" />
+              </Button>
+            </SheetClose>
+          </SheetHeader>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-1 py-5">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={(date) => {
-              if (!date) return;
-              setSelectedDate(date);
-              setSelectedTime(null);
-            }}
-            defaultMonth={selectedDate}
-            locale={ptDayPicker}
-            disabled={{ before: today }}
-            className="w-full max-w-none bg-transparent px-0 py-1 text-white [--cell-size:2.75rem] [&_.rdp-weekday]:uppercase [&_button[data-selected-single=true]]:rounded-full"
-            classNames={{
-              month_caption:
-                "text-sm font-medium capitalize text-white justify-start px-1",
-              nav: "absolute inset-x-0 top-0 flex w-full items-center justify-end gap-0.5",
-              button_previous: navButtonClass,
-              button_next: navButtonClass,
-              weekday:
-                "text-muted-foreground text-[0.7rem] font-normal uppercase",
-              day: "text-white",
-              outside: "text-muted-foreground opacity-50",
-              disabled: "text-muted-foreground opacity-40",
-            }}
-          />
+          <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-1 py-5">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => {
+                if (!date) return;
+                setSelectedDate(date);
+                setSelectedTime(null);
+              }}
+              defaultMonth={selectedDate}
+              locale={ptDayPicker}
+              disabled={{ before: today }}
+              className="w-full max-w-none bg-transparent px-0 py-1 text-white [--cell-size:2.75rem] [&_.rdp-weekday]:uppercase [&_button[data-selected-single=true]]:rounded-full"
+              classNames={{
+                month_caption:
+                  "text-sm font-medium capitalize text-white justify-start px-1",
+                nav: "absolute inset-x-0 top-0 flex w-full items-center justify-end gap-0.5",
+                button_previous: navButtonClass,
+                button_next: navButtonClass,
+                weekday:
+                  "text-muted-foreground text-[0.7rem] font-normal uppercase",
+                day: "text-white",
+                outside: "text-muted-foreground opacity-50",
+                disabled: "text-muted-foreground opacity-40",
+              }}
+            />
 
-          <div className="border-t border-white/10" />
+            <div className="border-t border-white/10" />
 
-          <div className="space-y-2">
-            {availableTimes.length > 0 ? (
-              <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
-                {availableTimes.map((t) => {
-                  const selected = validatedSelectedTime === t;
-                  return (
-                    <Button
-                      key={t}
-                      type="button"
-                      variant={selected ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedTime(t)}
-                      className={cn(
-                        "h-9 shrink-0 rounded-full px-4 text-sm font-medium",
-                        !selected &&
-                          "border-white/20 text-white hover:bg-white/10",
-                      )}
-                    >
-                      {t}
-                    </Button>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-muted-foreground py-4 text-center text-sm">
-                Nenhum horário disponível para esta data.
-              </p>
-            )}
+            <div className="space-y-2">
+              {availableTimes.length > 0 ? (
+                <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+                  {availableTimes.map((t) => {
+                    const selected = validatedSelectedTime === t;
+                    return (
+                      <Button
+                        key={t}
+                        type="button"
+                        variant={selected ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedTime(t)}
+                        className={cn(
+                          "h-9 shrink-0 rounded-full px-4 text-sm font-medium",
+                          !selected &&
+                            "border-white/20 text-white hover:bg-white/10",
+                        )}
+                      >
+                        {t}
+                      </Button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-muted-foreground py-4 text-center text-sm">
+                  Nenhum horário disponível para esta data.
+                </p>
+              )}
+            </div>
+
+            <div className="border-t border-white/10" />
+
+            <BookingSummaryCard
+              serviceName={serviceName}
+              priceLabel={priceLabel}
+              dateLabel={summaryDateLabel}
+              timeLabel={validatedSelectedTime ?? "—"}
+              barbershopName={barbershopName}
+            />
           </div>
 
-          <div className="border-t border-white/10" />
+          <div className="shrink-0 pt-4">
+            <Button
+              type="button"
+              className="h-11 w-full rounded-xl text-base font-semibold"
+              disabled={isPending || !selectedDate || !validatedSelectedTime}
+              onClick={handleCreateBooking}
+            >
+              {isPending ? "Salvando…" : "Confirmar"}
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
-          <BookingSummaryCard
-            serviceName={serviceName}
-            priceLabel={priceLabel}
-            dateLabel={summaryDateLabel}
-            timeLabel={validatedSelectedTime ?? "—"}
-            barbershopName={barbershopName}
-          />
-        </div>
-
-        <div className="shrink-0 pt-4">
-          <Button
-            type="button"
-            className="h-11 w-full rounded-xl text-base font-semibold"
-            disabled={isPending || !selectedDate || !validatedSelectedTime}
-            onClick={handleCreateBooking}
-          >
-            {isPending ? "Salvando…" : "Confirmar"}
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+      <AppModal
+        open={bookingSuccessOpen}
+        onOpenChange={setBookingSuccessOpen}
+        variant="acknowledge"
+        title="Reserva Efetuada!"
+        description="Sua reserva foi agendada com sucesso."
+        confirmLabel="Confirmar"
+      />
+    </>
   );
 };
 
