@@ -15,12 +15,12 @@ type BarbershopContactSectionProps = {
 async function copyToClipboard(value: string) {
   try {
     await navigator.clipboard.writeText(value);
-    toast.success("Número copiado!", {
+    toast.success("Number copied", {
       description: value,
     });
   } catch {
-    toast.error("Não foi possível copiar", {
-      description: "Verifique as permissões do navegador.",
+    toast.error("Could not copy", {
+      description: "Check your browser clipboard permissions.",
     });
   }
 }
@@ -35,7 +35,7 @@ const BarbershopContactSection = ({
 
   return (
     <div className={cn("mb-6 flex flex-col gap-4", className)}>
-      <Subtitle>CONTATO</Subtitle>
+      <Subtitle>PHONES</Subtitle>
       <ul className="flex flex-col gap-4">
         {phones.map((phone) => (
           <li
@@ -54,10 +54,10 @@ const BarbershopContactSection = ({
               variant="outline"
               size="sm"
               className="shrink-0"
-              aria-label={`Copiar número ${phone.number}`}
+              aria-label={`Copy number ${phone.number}`}
               onClick={() => void copyToClipboard(phone.number)}
             >
-              Copiar
+              Copy
             </Button>
           </li>
         ))}

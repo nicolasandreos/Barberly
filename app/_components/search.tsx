@@ -8,11 +8,9 @@ import { z } from "zod";
 import { Button } from "./ui/button";
 
 const inputSearchSchema = z.object({
-  barbershopName: z
-    .string()
-    .max(100, {
-      message: "Barbershop name must contain at most 100 characters",
-    }),
+  barbershopName: z.string().max(100, {
+    message: "Barbershop name must contain at most 100 characters",
+  }),
 });
 
 type InputSearchSchema = z.infer<typeof inputSearchSchema>;
@@ -49,7 +47,7 @@ const SearchInput = () => {
           type="submit"
           size="icon"
           className="size-12 shrink-0 rounded-xl"
-          aria-label="Buscar"
+          aria-label="Search"
         >
           <SearchIcon className="size-6" />
         </Button>

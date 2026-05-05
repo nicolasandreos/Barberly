@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { formatInTimeZone } from "date-fns-tz";
-import { ptBR } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import {
   Sheet,
   SheetClose,
@@ -26,10 +26,10 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { AppModal } from "@/app/_components/app-modal";
 
-const STATUS_BADGE_PT: Record<BookingStatus, string> = {
-  CONFIRMED: "Confirmado",
-  DONE: "Finalizado",
-  CANCELLED: "Cancelado",
+const STATUS_BADGE_EN: Record<BookingStatus, string> = {
+  CONFIRMED: "Confirmed",
+  DONE: "Finished",
+  CANCELLED: "Cancelled",
 };
 
 function truncateAddress(address: string, maxLen = 42) {
@@ -59,8 +59,8 @@ const BookingDetailSheet = ({
 
   const dateLabel = useMemo(
     () =>
-      formatInTimeZone(booking.startsAt, "UTC", "dd 'de' MMMM", {
-        locale: ptBR,
+      formatInTimeZone(booking.startsAt, "UTC", "MMMM d, yyyy", {
+        locale: enUS,
       }),
     [booking.startsAt],
   );
@@ -77,23 +77,23 @@ const BookingDetailSheet = ({
       const result = await cancelBooking(booking.id);
       if (result.ok) {
         setCancelConfirmOpen(false);
-        toast.success("Reserva cancelada.");
+        toast.success("Booking cancelled.");
         onOpenChange(false);
         router.refresh();
         return;
       }
       if (result.error === "UNAUTHENTICATED") {
-        toast.error("Inicie sessão novamente.");
+        toast.error("Please sign in again.");
         return;
       }
       if (result.error === "NOT_FOUND" || result.error === "INVALID_STATE") {
-        toast.error("Não foi possível cancelar esta reserva.");
+        toast.error("Could not cancel this booking.");
         return;
       }
     });
   };
 
-  const statusLabel = STATUS_BADGE_PT[booking.status];
+  const statusLabel = STATUS_BADGE_EN[booking.status];
   const isConfirmedBadge = booking.status === BookingStatus.CONFIRMED;
 
   return (
@@ -105,17 +105,17 @@ const BookingDetailSheet = ({
         >
           <SheetHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-0 border-b border-white/10 p-0 px-1 pb-4">
             <SheetTitle className="text-lg font-semibold tracking-tight text-white">
-              Informações da Reserva
+              Booking details
             </SheetTitle>
             <SheetDescription className="sr-only">
-              Detalhes do agendamento, localização e contato da barbearia.
+              Booking details, location, and barbershop contact.
             </SheetDescription>
             <SheetClose asChild>
               <Button
                 variant="ghost"
                 size="icon"
                 className="size-9 shrink-0 text-white hover:bg-white/10"
-                aria-label="Fechar"
+                aria-label="Close"
               >
                 <XIcon className="size-5" />
               </Button>
@@ -181,7 +181,7 @@ const BookingDetailSheet = ({
                   className="h-11 flex-1 rounded-xl border-white/20 text-white hover:bg-white/10"
                   onClick={() => onOpenChange(false)}
                 >
-                  Voltar
+                  Back
                 </Button>
                 <Button
                   type="button"
@@ -189,7 +189,7 @@ const BookingDetailSheet = ({
                   disabled={isPending}
                   onClick={() => setCancelConfirmOpen(true)}
                 >
-                  Cancelar Reserva
+                  Cancel booking
                 </Button>
               </div>
             ) : (
@@ -198,7 +198,7 @@ const BookingDetailSheet = ({
                 className="h-11 w-full rounded-xl text-base font-semibold"
                 onClick={() => onOpenChange(false)}
               >
-                Voltar
+                Back
               </Button>
             )}
           </div>
@@ -209,10 +209,10 @@ const BookingDetailSheet = ({
         open={cancelConfirmOpen}
         onOpenChange={setCancelConfirmOpen}
         variant="two-action"
-        title="Cancelar Reserva"
-        description="Tem certeza que deseja cancelar esse agendamento?"
-        cancelLabel="Voltar"
-        confirmLabel="Confirmar"
+        title="Cancel booking"
+        description="Are you sure you want to cancel this appointment?"
+        cancelLabel="Back"
+        confirmLabel="Confirm"
         confirmTone="danger"
         isConfirmPending={isPending}
         onConfirm={handleConfirmCancelBooking}

@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
 import { Button } from "@/app/_components/ui/button";
 import {
   Dialog,
@@ -25,10 +23,10 @@ const SigninGoogleButton = ({ onClick }: { onClick: () => void }) => {
       <DialogContent className="bg-card w-[400px] gap-8 rounded-2xl border-zinc-800 p-6 text-white">
         <DialogHeader className="flex flex-col items-center gap-2 space-y-0 text-center">
           <DialogTitle className="font-heading text-xl font-bold text-white">
-            Faça login na plataforma
+            Sign in to the app
           </DialogTitle>
           <DialogDescription className="text-sm font-normal text-zinc-400">
-            Conecte-se usando sua conta do Google
+            Continue with your Google account
           </DialogDescription>
         </DialogHeader>
 

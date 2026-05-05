@@ -1,7 +1,7 @@
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Prisma } from "@/generated/prisma/client";
 import { formatInTimeZone } from "date-fns-tz";
-import { ptBR } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { BookingStatus } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 
@@ -57,11 +57,11 @@ const BookingCard = ({ booking, compact = false }: BookingCardProps) => {
       <div className="flex min-h-0 shrink-0 flex-col items-center justify-center self-stretch border-l border-white/10 px-10 py-4">
         <p className="text-lg">
           {formatInTimeZone(booking.startsAt, "UTC", "MMMM", {
-            locale: ptBR,
+            locale: enUS,
           })}
         </p>
         <p className="text-2xl">
-          {formatInTimeZone(booking.startsAt, "UTC", "dd")}
+          {formatInTimeZone(booking.startsAt, "UTC", "d")}
         </p>
         <p className="text-sm">
           {formatInTimeZone(booking.startsAt, "UTC", "HH:mm")}

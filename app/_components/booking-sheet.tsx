@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { addHours, format, isSameDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { ptBR as ptDayPicker } from "react-day-picker/locale";
+import { enUS } from "date-fns/locale";
+import { enUS as enDayPicker } from "react-day-picker/locale";
 import { useSession } from "next-auth/react";
 import {
   Sheet,
@@ -60,10 +60,16 @@ function extractKeyFromISO(isoString: string): string {
   return `${ymd}|${hm}`;
 }
 
+function formatSlotDisplay(slot: string): string {
+  const [hours, minutes] = slot.split(":").map(Number);
+  const d = new Date(2000, 0, 1, hours, minutes);
+  return format(d, "HH:mm");
+}
+
 const BookingSheet = ({
   isOpen,
   onClose,
-  serviceName = "Corte de Cabelo",
+  serviceName = "Haircut",
   priceBrl = 50,
   barbershopName = "Vintage Barber",
   barbershopId,
@@ -94,7 +100,7 @@ const BookingSheet = ({
   );
 
   const summaryDateLabel = useMemo(
-    () => format(selectedDate, "dd 'de' MMMM", { locale: ptBR }),
+    () => format(selectedDate, "MMMM d, yyyy", { locale: enUS }),
     [selectedDate],
   );
 
@@ -156,16 +162,16 @@ const BookingSheet = ({
 
   const handleCreateBooking = () => {
     if (!barbershopId || !serviceId) {
-      toast.error("Dados do serviço indisponíveis para reservar.");
+      toast.error("Service details are unavailable for booking.");
       return;
     }
     if (status !== "authenticated" || !session?.user?.id) {
-      toast.error("Inicie sessão para criar uma reserva.");
+      toast.error("Sign in to create a booking.");
       return;
     }
 
     if (!validatedSelectedTime) {
-      toast.error("Escolha um horário válido.");
+      toast.error("Choose a valid time.");
       return;
     }
 
@@ -185,22 +191,22 @@ const BookingSheet = ({
       }
 
       if (result.error === "UNAUTHENTICATED") {
-        toast.error("Sessão expirada. Inicie sessão novamente.");
+        toast.error("Session expired. Please sign in again.");
         return;
       }
       if (result.error === "INVALID_DATE") {
-        toast.error("Data ou horário inválido.");
+        toast.error("Invalid date or time.");
         return;
       }
       if (result.error === "SERVICE_NOT_FOUND") {
-        toast.error("Serviço não encontrado nesta barbearia.");
+        toast.error("Service not found at this barbershop.");
         return;
       }
       if (result.error === "SLOT_TAKEN") {
-        toast.error("Este horário já foi reservado. Escolha outro horário.");
+        toast.error("This time slot is taken. Please choose another time.");
         return;
       }
-      toast.error("Erro ao criar reserva.");
+      toast.error("Could not create booking.");
     });
   };
 
@@ -218,17 +224,17 @@ const BookingSheet = ({
         >
           <SheetHeader className="flex shrink-0 flex-row items-center justify-between gap-3 space-y-0 border-0 border-b border-white/10 p-0 px-1 pb-4">
             <SheetTitle className="text-lg font-semibold tracking-tight text-white">
-              Fazer Reserva
+              Book appointment
             </SheetTitle>
             <SheetDescription className="sr-only">
-              Escolha data e horário para confirmar sua reserva.
+              Pick a date and time to confirm your booking.
             </SheetDescription>
             <SheetClose asChild>
               <Button
                 variant="ghost"
                 size="icon"
                 className="size-9 shrink-0 text-white hover:bg-white/10"
-                aria-label="Fechar"
+                aria-label="Close"
               >
                 <XIcon className="size-5" />
               </Button>
@@ -245,7 +251,7 @@ const BookingSheet = ({
                 setSelectedTime(null);
               }}
               defaultMonth={selectedDate}
-              locale={ptDayPicker}
+              locale={enDayPicker}
               disabled={{ before: today }}
               className="w-full max-w-none bg-transparent px-0 py-1 text-white [--cell-size:2.75rem] [&_.rdp-weekday]:uppercase [&_button[data-selected-single=true]]:rounded-full"
               classNames={{
@@ -282,14 +288,14 @@ const BookingSheet = ({
                             "border-white/20 text-white hover:bg-white/10",
                         )}
                       >
-                        {t}
+                        {formatSlotDisplay(t)}
                       </Button>
                     );
                   })}
                 </div>
               ) : (
                 <p className="text-muted-foreground py-4 text-center text-sm">
-                  Nenhum horário disponível para esta data.
+                  No available times for this date.
                 </p>
               )}
             </div>
@@ -300,7 +306,11 @@ const BookingSheet = ({
               serviceName={serviceName}
               priceLabel={priceLabel}
               dateLabel={summaryDateLabel}
-              timeLabel={validatedSelectedTime ?? "—"}
+              timeLabel={
+                validatedSelectedTime
+                  ? formatSlotDisplay(validatedSelectedTime)
+                  : "—"
+              }
               barbershopName={barbershopName}
             />
           </div>
@@ -312,7 +322,7 @@ const BookingSheet = ({
               disabled={isPending || !selectedDate || !validatedSelectedTime}
               onClick={handleCreateBooking}
             >
-              {isPending ? "Salvando…" : "Confirmar"}
+              {isPending ? "Saving…" : "Confirm"}
             </Button>
           </div>
         </SheetContent>
@@ -322,9 +332,9 @@ const BookingSheet = ({
         open={bookingSuccessOpen}
         onOpenChange={setBookingSuccessOpen}
         variant="acknowledge"
-        title="Reserva Efetuada!"
-        description="Sua reserva foi agendada com sucesso."
-        confirmLabel="Confirmar"
+        title="Booking confirmed"
+        description="Your appointment has been scheduled successfully."
+        confirmLabel="OK"
       />
     </>
   );

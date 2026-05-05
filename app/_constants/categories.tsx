@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-/** SVG como <img>: `text-*` não altera fill; monocromático branco via filtro (exceto SVG já branco como beard-icon). */
+/** SVG as <img>: `text-*` does not change fill; monochrome white via filter (except SVGs already white like beard-icon). */
 const iconWhiteFilter = "brightness-0 invert";
 
 export const categories = [

@@ -8,7 +8,7 @@ const SERVICE_CATEGORY_KEYS = new Set<string>([
   "MASSAGE",
 ]);
 
-/** Normaliza query string (ex.: `hair`) para o enum do Prisma (`HAIR`). */
+/** Normalize query string (e.g. `hair`) to the Prisma enum (`HAIR`). */
 export function parseServiceCategory(
   raw: string | undefined | null,
 ): ServiceCategory | undefined {
@@ -18,11 +18,10 @@ export function parseServiceCategory(
   return key as ServiceCategory;
 }
 
-// Pega a data formatada em Sexta, 2 de fevereiro
+/** Formatted date for home header (e.g. Tuesday, May 5). */
 export const getFormattedDate = () => {
   const date = new Date();
   let formattedDate = formatter.format(date);
-  formattedDate = formattedDate.replace("-feira", "");
   formattedDate = capitalizeFirstLetter(formattedDate);
   return formattedDate;
 };
@@ -31,7 +30,7 @@ export const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
 
-const formatter = new Intl.DateTimeFormat("pt-BR", {
+const formatter = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
   day: "numeric",
   month: "long",

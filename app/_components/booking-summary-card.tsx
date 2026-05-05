@@ -1,4 +1,4 @@
-/** Resumo de reserva (reaproveitado no fluxo de agendamento e no detalhe). */
+/** Booking summary block (reused in booking flow and detail sheet). */
 export type BookingSummaryCardProps = {
   serviceName: string;
   priceLabel: string;
@@ -22,15 +22,15 @@ const BookingSummaryCard = ({
       </div>
       <dl className="space-y-2 text-sm">
         <div className="flex justify-between gap-4">
-          <dt className="text-muted-foreground shrink-0">Data</dt>
+          <dt className="text-muted-foreground shrink-0">Date</dt>
           <dd className="text-right font-medium text-white">{dateLabel}</dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-muted-foreground shrink-0">Horário</dt>
+          <dt className="text-muted-foreground shrink-0">Time</dt>
           <dd className="text-right font-medium text-white">{timeLabel}</dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-muted-foreground shrink-0">Barbearia</dt>
+          <dt className="text-muted-foreground shrink-0">Barbershop</dt>
           <dd className="text-right font-medium text-white">
             {barbershopName}
           </dd>

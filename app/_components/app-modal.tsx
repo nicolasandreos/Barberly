@@ -24,7 +24,7 @@ export type AppModalProps =
       description: ReactNode;
       cancelLabel: string;
       confirmLabel: string;
-      /** danger = vermelho (logout / cancelar reserva) */
+      /** danger = red (sign-out / cancel booking) */
       confirmTone?: "danger" | "neutral";
       onCancel?: () => void;
       onConfirm: () => void | Promise<void>;

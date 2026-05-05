@@ -21,7 +21,7 @@ export type CreateBookingResult =
 export type CreateBookingInput = {
   idBarbershop: string;
   idService: string;
-  /** Instante único em ISO 8601 UTC (ex.: 9h em Brasília → …T12:00:00.000Z). */
+  /** Single instant as ISO 8601 UTC (e.g. 9:00 America/Sao_Paulo → …T12:00:00.000Z). */
   startsAt: string;
 };
 

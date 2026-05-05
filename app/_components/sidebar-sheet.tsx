@@ -153,10 +153,10 @@ const SidebarSheet = ({
         open={signOutConfirmOpen}
         onOpenChange={setSignOutConfirmOpen}
         variant="two-action"
-        title="Sair"
-        description="Deseja mesmo sair da plataforma?"
-        cancelLabel="Cancelar"
-        confirmLabel="Sair"
+        title="Sign out"
+        description="Are you sure you want to sign out?"
+        cancelLabel="Cancel"
+        confirmLabel="Sign out"
         confirmTone="danger"
         onConfirm={() => {
           setSignOutConfirmOpen(false);
