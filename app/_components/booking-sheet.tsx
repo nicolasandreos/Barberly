@@ -36,11 +36,6 @@ const navButtonClass = cn(
   "size-8 shrink-0 text-white hover:bg-white/10 aria-disabled:opacity-40",
 );
 
-/**
- * Cria uma string ISO "naive" (sem timezone) no formato UTC.
- * Exemplo: data=2026-05-04, hora=09:00 → "2026-05-04T09:00:00.000Z"
- * ATENÇÃO: Isso NÃO considera fuso horário. O valor UTC será literal.
- */
 function combineDateAndTime(date: Date, timeHHmm: string): string {
   const ymd = format(date, "yyyy-MM-dd");
   return `${ymd}T${timeHHmm}:00.000Z`;

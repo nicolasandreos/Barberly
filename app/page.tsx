@@ -13,11 +13,12 @@ import {
 } from "./_data_access/barbershop";
 import Image from "next/image";
 import UserGreetings from "./_components/user-greetings";
+import { getUserCurrentBookings } from "./_data_access/bookings";
 
 export default async function Home() {
   const recommendedBarbershops = await getRecommendedBarbershops();
-
   const popularBarbershops = await getPopularBarbershops();
+  const userCurrentBookings = await getUserCurrentBookings();
 
   return (
     <>
@@ -40,7 +41,11 @@ export default async function Home() {
         <div className="relative h-[175px] w-full overflow-hidden rounded-2xl">
           <Image src="/banner.jpg" alt="Banner" fill className="object-cover" />
         </div>
-        <CurrentBooking />
+
+        {userCurrentBookings && userCurrentBookings.length > 0 && (
+          <CurrentBooking bookings={userCurrentBookings} />
+        )}
+
         <BarbershopsSection
           title="RECOMMENDED"
           barbershops={recommendedBarbershops}

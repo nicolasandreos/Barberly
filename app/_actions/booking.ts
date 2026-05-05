@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth-options";
 import { db } from "@/lib/db";
 import { addMinutes } from "date-fns";
 import { BookingStatus } from "@/generated/prisma/client";
+import { revalidatePath } from "next/cache";
 
 export type CreateBookingResult =
   | { ok: true; bookingId: string }
@@ -23,7 +24,6 @@ export type CreateBookingInput = {
 async function createBooking(
   input: CreateBookingInput,
 ): Promise<CreateBookingResult> {
-  console.log(input);
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return { ok: false, error: "UNAUTHENTICATED" };
@@ -54,6 +54,8 @@ async function createBooking(
       status: BookingStatus.CONFIRMED,
     },
   });
+
+  revalidatePath("/");
 
   return { ok: true, bookingId: booking.id };
 }

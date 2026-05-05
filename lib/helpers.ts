@@ -1,4 +1,5 @@
 import type { ServiceCategory } from "@/generated/prisma/enums";
+import { toZonedTime } from "date-fns-tz";
 
 const SERVICE_CATEGORY_KEYS = new Set<string>([
   "HAIR",
@@ -45,4 +46,9 @@ export const formatCurrency = (value: number) => {
 
 export const capitalize = (string: string) => {
   return string.toUpperCase();
+};
+
+export const convertUTCToLocalDateAndTime = (utcTime: Date) => {
+  const localDate = toZonedTime(utcTime, "America/Sao_Paulo");
+  return localDate;
 };
