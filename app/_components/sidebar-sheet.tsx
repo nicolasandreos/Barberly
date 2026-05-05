@@ -3,7 +3,8 @@ import SigninGoogleButton from "./signin-google-button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import UserInformation from "./user-information";
 import { User } from "@/generated/prisma/client";
-import { useRouter } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
   Sheet,
   SheetClose,
@@ -23,11 +24,18 @@ const SidebarSheet = ({
   onClose: () => void;
 }) => {
   const mainItems = [
-    { label: "Inicio", icon: House, active: true },
-    { label: "Agendamentos", icon: CalendarDays },
+    { label: "Home", icon: House, href: "/" },
+    {
+      label: "Bookings",
+      icon: CalendarDays,
+      href: "/bookings",
+      requiresAuth: true,
+    },
   ];
 
   const { data } = useSession();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const handleSignOut = () => {
     signOut();
   };
@@ -35,7 +43,9 @@ const SidebarSheet = ({
     signIn("google");
   };
 
-  const router = useRouter();
+  const visibleMainItems = mainItems.filter(
+    (item) => !item.requiresAuth || data?.user,
+  );
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -52,7 +62,7 @@ const SidebarSheet = ({
               variant="ghost"
               size="icon"
               className="size-5 shrink-0 p-3 text-white hover:bg-white/10"
-              aria-label="Fechar menu"
+              aria-label="Close menu"
             >
               <XIcon className="size-5" />
             </Button>
@@ -72,22 +82,24 @@ const SidebarSheet = ({
           )}
 
           <nav className="mt-4 space-y-1">
-            {mainItems.map((item) => {
+            {visibleMainItems.map((item) => {
               const Icon = item.icon;
+              const isActive = pathname === item.href;
               return (
-                <button
+                <Link
                   key={item.label}
-                  type="button"
+                  href={item.href}
+                  onClick={onClose}
                   className={cn(
                     "flex h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors",
-                    item.active
+                    isActive
                       ? "bg-violet-600 text-white"
                       : "text-zinc-100 hover:bg-white/10",
                   )}
                 >
                   <Icon className="size-4" />
                   {item.label}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -96,18 +108,24 @@ const SidebarSheet = ({
 
           <nav className="space-y-1">
             {categories.map((category) => {
+              const isActive =
+                pathname === "/service" &&
+                searchParams.get("category") === category.label;
               return (
-                <button
-                  onClick={() => {
-                    router.push(`/service?category=${category.label}`);
-                  }}
+                <Link
+                  href={`/service?category=${category.label}`}
+                  onClick={onClose}
                   key={category.label}
-                  type="button"
-                  className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm text-zinc-100 transition-colors hover:bg-white/10"
+                  className={cn(
+                    "flex h-10 w-full items-center gap-3 rounded-xl px-3 text-left text-sm transition-colors",
+                    isActive
+                      ? "bg-violet-600 text-white"
+                      : "text-zinc-100 hover:bg-white/10",
+                  )}
                 >
                   {category.icon}
                   {category.label}
-                </button>
+                </Link>
               );
             })}
           </nav>
@@ -120,7 +138,7 @@ const SidebarSheet = ({
             onClick={handleSignOut}
           >
             <LogOut className="size-4" />
-            Sair da conta
+            Sign out
           </button>
         </div>
       </SheetContent>

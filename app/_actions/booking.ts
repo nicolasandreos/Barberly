@@ -72,6 +72,7 @@ async function createBooking(
   });
 
   revalidatePath("/");
+  revalidatePath("/bookings");
 
   return { ok: true, bookingId: booking.id };
 }
