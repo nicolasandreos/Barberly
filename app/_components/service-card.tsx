@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Service } from "@/generated/prisma/client";
+import { collapseTextForPreview } from "@/lib/helpers";
 
 const ServiceCard = ({ service }: { service: Service }) => {
   return (
@@ -17,12 +18,12 @@ const ServiceCard = ({ service }: { service: Service }) => {
         />
       </div>
       <div className="flex h-[40%] min-h-0 w-full flex-col justify-between gap-1 p-2">
-        <div className="min-w-0">
+        <div className="min-h-0 min-w-0 overflow-hidden">
           <p className="truncate text-lg leading-tight font-bold">
             {service.name}
           </p>
-          <p className="text-muted-foreground truncate text-sm">
-            {service.description}
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug break-words">
+            {collapseTextForPreview(service.description)}
           </p>
         </div>
         <Button

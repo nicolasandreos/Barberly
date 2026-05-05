@@ -47,6 +47,14 @@ export const capitalize = (string: string) => {
   return string.toUpperCase();
 };
 
+/** Collapses newlines and runs of spaces for short UI previews (e.g. line-clamp cards). */
+export function collapseTextForPreview(text: string): string {
+  return text
+    .replace(/\s*\n+\s*/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export const convertUTCToLocalDateAndTime = (utcTime: Date) => {
   const localDate = toZonedTime(utcTime, "America/Sao_Paulo");
   return localDate;
