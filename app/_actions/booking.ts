@@ -11,7 +11,11 @@ export type CreateBookingResult =
   | { ok: true; bookingId: string }
   | {
       ok: false;
-      error: "UNAUTHENTICATED" | "INVALID_DATE" | "SERVICE_NOT_FOUND";
+      error:
+        | "UNAUTHENTICATED"
+        | "INVALID_DATE"
+        | "SERVICE_NOT_FOUND"
+        | "SLOT_TAKEN";
     };
 
 export type CreateBookingInput = {
@@ -42,6 +46,18 @@ async function createBooking(
   });
   if (!service) {
     return { ok: false, error: "SERVICE_NOT_FOUND" };
+  }
+
+  const existingBooking = await db.booking.findFirst({
+    where: {
+      idService: input.idService,
+      idBarbershop: input.idBarbershop,
+      startsAt,
+      status: BookingStatus.CONFIRMED,
+    },
+  });
+  if (existingBooking) {
+    return { ok: false, error: "SLOT_TAKEN" };
   }
 
   const booking = await db.booking.create({

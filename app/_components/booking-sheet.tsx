@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { format } from "date-fns";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { addHours, format, isSameDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ptBR as ptDayPicker } from "react-day-picker/locale";
 import { useSession } from "next-auth/react";
@@ -18,6 +18,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
 import createBooking from "../_actions/booking";
+import { fetchBookedTimes } from "../_actions/availability";
 import { toast } from "sonner";
 
 const DEFAULT_TIMES = [
@@ -41,6 +42,22 @@ function combineDateAndTime(date: Date, timeHHmm: string): string {
   return `${ymd}T${timeHHmm}:00.000Z`;
 }
 
+function pad(n: number): string {
+  return n.toString().padStart(2, "0");
+}
+
+function buildKey(date: Date, time: string): string {
+  const ymd = format(date, "yyyy-MM-dd");
+  return `${ymd}|${time}`;
+}
+
+function extractKeyFromISO(isoString: string): string {
+  const d = new Date(isoString);
+  const ymd = `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  const hm = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+  return `${ymd}|${hm}`;
+}
+
 const BookingSheet = ({
   isOpen,
   onClose,
@@ -62,6 +79,7 @@ const BookingSheet = ({
   const [isPending, startTransition] = useTransition();
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [bookedKeys, setBookedKeys] = useState<Set<string>>(new Set());
 
   const priceLabel = useMemo(
     () =>
@@ -77,6 +95,62 @@ const BookingSheet = ({
     [selectedDate],
   );
 
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || !barbershopId || !serviceId) return;
+
+    let cancelled = false;
+
+    fetchBookedTimes({ idService: serviceId, idBarbershop: barbershopId })
+      .then((isoStrings) => {
+        if (cancelled) return;
+        const keys = new Set(isoStrings.map(extractKeyFromISO));
+        setBookedKeys(keys);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch booked times:", err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, barbershopId, serviceId]);
+
+  const availableTimes = useMemo(() => {
+    const now = new Date();
+    const isToday = isSameDay(selectedDate, now);
+    const twoHoursFromNow = addHours(now, 2);
+
+    return DEFAULT_TIMES.filter((slot) => {
+      if (isToday) {
+        const [hours, minutes] = slot.split(":").map(Number);
+        const slotDateTime = new Date(selectedDate);
+        slotDateTime.setHours(hours, minutes, 0, 0);
+
+        if (slotDateTime < twoHoursFromNow) {
+          return false;
+        }
+      }
+
+      const key = buildKey(selectedDate, slot);
+      if (bookedKeys.has(key)) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [selectedDate, bookedKeys]);
+
+  const validatedSelectedTime = useMemo(() => {
+    if (!selectedTime) return null;
+    return availableTimes.includes(selectedTime) ? selectedTime : null;
+  }, [availableTimes, selectedTime]);
+
   const handleCreateBooking = () => {
     if (!barbershopId || !serviceId) {
       toast.error("Dados do serviço indisponíveis para reservar.");
@@ -87,7 +161,12 @@ const BookingSheet = ({
       return;
     }
 
-    const startsAt = combineDateAndTime(selectedDate, selectedTime as string);
+    if (!validatedSelectedTime) {
+      toast.error("Escolha um horário válido.");
+      return;
+    }
+
+    const startsAt = combineDateAndTime(selectedDate, validatedSelectedTime);
 
     startTransition(async () => {
       const result = await createBooking({
@@ -112,6 +191,10 @@ const BookingSheet = ({
       }
       if (result.error === "SERVICE_NOT_FOUND") {
         toast.error("Serviço não encontrado nesta barbearia.");
+        return;
+      }
+      if (result.error === "SLOT_TAKEN") {
+        toast.error("Este horário já foi reservado. Escolha outro horário.");
         return;
       }
       toast.error("Erro ao criar reserva.");
@@ -152,9 +235,14 @@ const BookingSheet = ({
           <Calendar
             mode="single"
             selected={selectedDate}
-            onSelect={(date) => date && setSelectedDate(date)}
+            onSelect={(date) => {
+              if (!date) return;
+              setSelectedDate(date);
+              setSelectedTime(null);
+            }}
             defaultMonth={selectedDate}
             locale={ptDayPicker}
+            disabled={{ before: today }}
             className="w-full max-w-none bg-transparent px-0 py-1 text-white [--cell-size:2.75rem] [&_.rdp-weekday]:uppercase [&_button[data-selected-single=true]]:rounded-full"
             classNames={{
               month_caption:
@@ -173,27 +261,33 @@ const BookingSheet = ({
           <div className="border-t border-white/10" />
 
           <div className="space-y-2">
-            <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
-              {DEFAULT_TIMES.map((t) => {
-                const selected = selectedTime === t;
-                return (
-                  <Button
-                    key={t}
-                    type="button"
-                    variant={selected ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedTime(t)}
-                    className={cn(
-                      "h-9 shrink-0 rounded-full px-4 text-sm font-medium",
-                      !selected &&
-                        "border-white/20 text-white hover:bg-white/10",
-                    )}
-                  >
-                    {t}
-                  </Button>
-                );
-              })}
-            </div>
+            {availableTimes.length > 0 ? (
+              <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+                {availableTimes.map((t) => {
+                  const selected = validatedSelectedTime === t;
+                  return (
+                    <Button
+                      key={t}
+                      type="button"
+                      variant={selected ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedTime(t)}
+                      className={cn(
+                        "h-9 shrink-0 rounded-full px-4 text-sm font-medium",
+                        !selected &&
+                          "border-white/20 text-white hover:bg-white/10",
+                      )}
+                    >
+                      {t}
+                    </Button>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-muted-foreground py-4 text-center text-sm">
+                Nenhum horário disponível para esta data.
+              </p>
+            )}
           </div>
 
           <div className="border-t border-white/10" />
@@ -217,7 +311,7 @@ const BookingSheet = ({
               <div className="flex justify-between gap-4">
                 <dt className="text-muted-foreground shrink-0">Horário</dt>
                 <dd className="text-right font-medium text-white">
-                  {selectedTime}
+                  {validatedSelectedTime ?? "—"}
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
@@ -234,7 +328,7 @@ const BookingSheet = ({
           <Button
             type="button"
             className="h-11 w-full rounded-xl text-base font-semibold"
-            disabled={isPending || !selectedDate || !selectedTime}
+            disabled={isPending || !selectedDate || !validatedSelectedTime}
             onClick={handleCreateBooking}
           >
             {isPending ? "Salvando…" : "Confirmar"}

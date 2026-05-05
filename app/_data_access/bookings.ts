@@ -23,6 +23,23 @@ export const getUserCurrentBookings = async () => {
       startsAt: "asc",
     },
   });
-  console.log(bookings);
   return bookings;
+};
+
+export const getBookedTimesForService = async (params: {
+  idService: string;
+  idBarbershop: string;
+}) => {
+  const startOfToday = new Date();
+  startOfToday.setUTCHours(0, 0, 0, 0);
+  const bookings = await db.booking.findMany({
+    where: {
+      idService: params.idService,
+      idBarbershop: params.idBarbershop,
+      status: BookingStatus.CONFIRMED,
+      startsAt: { gte: startOfToday },
+    },
+    select: { startsAt: true },
+  });
+  return bookings.map((b) => b.startsAt.toISOString());
 };
