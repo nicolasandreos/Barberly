@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
-  secret: process.env.NEXT_AUTH_SECRET!,
+  secret: process.env.NEXTAUTH_SECRET!,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
