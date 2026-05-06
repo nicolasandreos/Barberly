@@ -23,7 +23,7 @@ const ServiceCard = ({
       <div className="flex min-h-[110px] min-w-0 flex-1 flex-col justify-between gap-2">
         <div className="min-h-0 min-w-0 space-y-2 overflow-hidden">
           <h3 className="text-lg leading-tight font-bold">{service.name}</h3>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug font-light break-words">
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug font-light wrap-break-word">
             {collapseTextForPreview(service.description)}
           </p>
         </div>
