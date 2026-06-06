@@ -1,12 +1,15 @@
-# Barbely - Agendamento de Barbearias
+# Barberly — Agendamento de Barbearias
+
+**Demo em produção:** [barberly-rose.vercel.app](https://barberly-rose.vercel.app/)  
+**Código-fonte:** [github.com/nicolasandreos/Barberly](https://github.com/nicolasandreos/Barberly)
 
 ## 🗓️ Sobre o Projeto
 
-Barbely é uma plataforma intuitiva e moderna projetada para simplificar o agendamento de serviços em barbearias. Com foco total na experiência mobile, a aplicação permite que os usuários encontrem facilmente barbearias, escolham horários e serviços específicos, e gerenciem suas reservas de forma eficiente, tudo na palma da mão.
+Barberly é uma plataforma intuitiva e moderna projetada para simplificar o agendamento de serviços em barbearias. Com foco total na experiência mobile, a aplicação permite que os usuários encontrem facilmente barbearias, escolham horários e serviços específicos, e gerenciem suas reservas de forma eficiente, tudo na palma da mão.
 
 ### Problema que Resolve
 
-No mundo agitado de hoje, agendar um serviço em uma barbearia pode ser um processo demorado e inconveniente, exigindo ligações telefônicas ou visitas presenciais. Barbely elimina essas barreiras, oferecendo uma solução digital completa que otimiza o tempo tanto dos clientes quanto dos estabelecimentos.
+No mundo agitado de hoje, agendar um serviço em uma barbearia pode ser um processo demorado e inconveniente, exigindo ligações telefônicas ou visitas presenciais. Barberly elimina essas barreiras, oferecendo uma solução digital completa que otimiza o tempo tanto dos clientes quanto dos estabelecimentos.
 
 ### Funcionalidades Principais
 
@@ -25,10 +28,11 @@ Este projeto foi construído utilizando um conjunto robusto de tecnologias moder
 - **ORM:** [Prisma](https://www.prisma.io/) - Um ORM de última geração para Node.js e TypeScript que facilita a interação com o banco de dados e a manutenção do esquema.
 - **Autenticação:** [NextAuth.js](https://next-auth.js.org/) com [Google OAuth](https://developers.google.com/identity/protocols/oauth2) - Solução completa de autenticação para Next.js, com suporte para múltiplos provedores e alta segurança.
 - **Deployment:** [Vercel](https://vercel.com/) - Plataforma de deployment sem servidor para aplicações Next.js, oferecendo integrações contínuas, escalabilidade automática e CDN global.
+- **UI:** React, Tailwind CSS e componentes Radix/shadcn — interface pensada para telas de celular.
 
 ## 🏗️ Estrutura do Projeto
 
-A arquitetura do Barbely segue as melhores práticas de desenvolvimento, com uma estrutura de pastas organizada para facilitar a manutenção e a escalabilidade:
+A arquitetura do Barberly separa responsabilidades entre UI, acesso a dados e regras de negócio:
 
 ```
 barberly/
@@ -38,17 +42,19 @@ barberly/
 │   ├── _components/          # Componentes reutilizáveis em toda a aplicação
 │   ├── barbershops/          # Páginas e componentes específicos de barbearias
 │   ├── bookings/             # Páginas e componentes de agendamentos
+│   ├── _data_access/         # Consultas ao banco (barbearias, serviços, reservas)
+│   ├── _actions/             # Server Actions (agendamento, disponibilidade, cancelamento)
 │   └── layout.tsx            # Layout global da aplicação
 ├── lib/                      # Funções utilitárias, helpers e configurações globais
-│   ├── auth.ts               # Configurações do NextAuth.js
+│   ├── auth-options.ts       # Configurações do NextAuth.js
 │   ├── db.ts                 # Configuração do cliente Prisma
 │   └── utils.ts              # Funções de utilidade diversas
 ├── prisma/                   # Arquivos de configuração e esquema do Prisma ORM
 │   ├── schema.prisma         # Definição do modelo de dados do banco
+│   ├── seed.ts               # Dados iniciais para desenvolvimento/demo
 │   └── migrations/           # Histórico de migrações do banco de dados
 ├── public/                   # Arquivos estáticos (imagens, ícones, etc.)
-├── .env.local.example        # Exemplo de arquivo de variáveis de ambiente
-├── next.config.mjs           # Configuração do Next.js
+├── next.config.ts            # Configuração do Next.js
 ├── package.json              # Metadados e dependências do projeto
 ├── tsconfig.json             # Configuração do TypeScript
 └── README.md                 # Este arquivo
@@ -56,7 +62,7 @@ barberly/
 
 ## ⚙️ Como Executar Localmente
 
-Siga estas instruções para configurar e executar o projeto Barbely em seu ambiente de desenvolvimento local.
+Siga estas instruções para configurar e executar o projeto Barberly em seu ambiente de desenvolvimento local.
 
 ### Pré-requisitos
 
@@ -73,8 +79,8 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
     Abra seu terminal e clone o projeto:
 
     ```bash
-    git clone https://github.com/nicol/barberly.git # Substitua pela URL real do seu repositório
-    cd barbely
+    git clone https://github.com/nicolasandreos/Barberly.git
+    cd Barberly
     ```
 
 2.  **Instale as Dependências:**
@@ -97,69 +103,52 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
     - Selecione "Aplicativo da Web".
     - No campo "URIs de redirecionamento autorizados", adicione:
       - `http://localhost:3000/api/auth/callback/google` (para desenvolvimento local)
-      - `[SUA_URL_DE_PRODUCAO]/api/auth/callback/google` (para deployment em Vercel)
+      - `https://barberly-rose.vercel.app/api/auth/callback/google` (produção na Vercel)
     - Após a criação, você receberá um **ID do Cliente** e um **Segredo do Cliente**. Guarde-os.
 
 5.  **Variáveis de Ambiente:**
-    Crie um arquivo chamado `.env.local` na raiz do seu projeto. Copie o conteúdo de `.env.local.example` e preencha com suas próprias credenciais:
+    Crie um arquivo `.env` na raiz do projeto (o Next.js também lê `.env.local`). Use exatamente estes nomes:
 
     ```ini
-    # Configuração do Banco de Dados PostgreSQL
-    DATABASE_URL="postgresql://[USUARIO]:[SENHA]@[HOST]:[PORTA]/barberly_db?schema=public"
-
-    # Configuração do NextAuth.js
-    NEXTAUTH_URL="http://localhost:3000" # Mude para a URL de produção ao fazer o deploy
-    NEXTAUTH_SECRET="SEU_SEGREDO_ALTAMENTE_SEGURO_PARA_NEXTAUTH" # Gere uma string longa e aleatória
-
-    # Credenciais do Google OAuth
-    GOOGLE_CLIENT_ID="SEU_ID_DO_CLIENTE_GOOGLE"
-    GOOGLE_CLIENT_SECRET="SEU_SEGREDO_DO_CLIENTE_GOOGLE"
-
-    # Outras variáveis (se houver, adicione aqui)
-    # UPLOAD_API_KEY="SUA_CHAVE_DE_API_DE_UPLOAD" # Exemplo
+    DATABASE_URL="postgresql://USUARIO:SENHA@HOST:PORTA/NOME_DO_BANCO?schema=public"
+    GOOGLE_CLIENT_ID="seu-client-id.apps.googleusercontent.com"
+    GOOGLE_CLIENT_SECRET="seu-client-secret"
+    NEXTAUTH_SECRET="string-longa-e-aleatoria"
     ```
 
-    - **Variáveis Essenciais:**
-      - `DATABASE_URL`: URL de conexão com o seu banco de dados PostgreSQL.
-      - `NEXTAUTH_URL`: A URL base da sua aplicação (local ou de produção).
-      - `NEXTAUTH_SECRET`: Uma string secreta e longa usada para criptografia no NextAuth.js. **Importante:** Gere uma string longa e complexa (ex: `openssl rand -base64 32`).
-      - `GOOGLE_CLIENT_ID`: ID do cliente obtido no Google Cloud Console.
-      - `GOOGLE_CLIENT_SECRET`: Segredo do cliente obtido no Google Cloud Console.
+    Para desenvolvimento local, defina também (recomendado):
 
-### População Inicial do Banco de Dados (Seed)
+    ```ini
+    NEXTAUTH_URL="http://localhost:3000"
+    ```
 
-Para popular o banco de dados com dados de exemplo (barbearias, serviços, etc.), você pode usar o script de seed. Isso é útil para testes e para ter dados iniciais para a aplicação.
+    Na Vercel, configure as mesmas variáveis no painel do projeto e use `NEXTAUTH_URL=https://barberly-rose.vercel.app`.
 
-1.  **Execute o script de seed:**
+    | Variável               | Obrigatória     | Descrição                                                |
+    | ---------------------- | --------------- | -------------------------------------------------------- |
+    | `DATABASE_URL`         | Sim             | URL do PostgreSQL (local, Neon, Supabase, etc.).         |
+    | `GOOGLE_CLIENT_ID`     | Sim             | ID OAuth 2.0 do Google Cloud.                            |
+    | `GOOGLE_CLIENT_SECRET` | Sim             | Segredo do cliente OAuth.                                |
+    | `NEXTAUTH_SECRET`      | Sim             | Segredo do NextAuth; gere com `openssl rand -base64 32`. |
+    | `NEXTAUTH_URL`         | Sim em produção | URL pública da app (local ou Vercel).                    |
+
+6.  **Sincronização do Banco de Dados (Prisma):**
+    Com o `DATABASE_URL` válido, aplique as migrações:
+
+    ```bash
+    npx prisma migrate dev
+    ```
+
+    Isso cria/atualiza as tabelas conforme `prisma/schema.prisma`.
+
+7.  **População inicial (seed):**
+    Depois das migrações, popule barbearias, serviços e dados de demonstração:
 
     ```bash
     npx prisma db seed
     ```
 
-    Este comando executará o arquivo `prisma/seed.ts`, que contém a lógica para inserir dados fictícios no seu banco de dados.
-
-    **Nota:** Certifique-se de que o seu banco de dados esteja acessível e as migrações tenham sido aplicadas antes de executar o seed.
-
-2.  **Sincronização do Banco de Dados (Prisma Migrações):**
-    Execute o comando para aplicar as migrações do Prisma e criar as tabelas no seu banco de dados:
-    ```bash
-    npx prisma migrate dev --name init
-    ```
-    Isso criará o esquema do banco de dados conforme definido em `prisma/schema.prisma`.
-
-### População Inicial do Banco de Dados (Seed)
-
-Para popular o banco de dados com dados de exemplo (barbearias, serviços, etc.), você pode usar o script de seed. Isso é útil para testes e para ter dados iniciais para a aplicação.
-
-1.  **Execute o script de seed:**
-
-    ```bash
-    npx prisma db seed
-    ```
-
-    Este comando executará o arquivo `prisma/seed.ts`, que contém a lógica para inserir dados fictícios no seu banco de dados.
-
-    **Nota:** Certifique-se de que o seu banco de dados esteja acessível e as migrações tenham sido aplicadas antes de executar o seed.
+    O seed está configurado em `package.json` (`prisma.seed`) e executa `prisma/seed-runner.ts` → `prisma/seed.ts`.
 
 ### Executando a Aplicação
 
